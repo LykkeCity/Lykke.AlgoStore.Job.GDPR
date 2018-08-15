@@ -141,7 +141,7 @@ namespace Lykke.AlgoStore.Job.GDPR
         {
             try
             {
-                // NOTE: Job not yet recieve and process IsAlive requests here
+                // NOTE: Job not yet receive and process IsAlive requests here
 
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
                 _healthNotifier.Notify("Started", Program.EnvInfo);
@@ -161,7 +161,7 @@ namespace Lykke.AlgoStore.Job.GDPR
         {
             try
             {
-                // NOTE: Job still can recieve and process IsAlive requests here, so take care about it if you add logic here.
+                // NOTE: Job still can receive and process IsAlive requests here, so take care about it if you add logic here.
 
                 await ApplicationContainer.Resolve<IShutdownManager>().StopAsync();
             }
@@ -176,7 +176,7 @@ namespace Lykke.AlgoStore.Job.GDPR
         {
             try
             {
-                // NOTE: Job can't recieve and process IsAlive requests here, so you can destroy all resources
+                // NOTE: Job can't receive and process IsAlive requests here, so you can destroy all resources
                 _healthNotifier?.Notify("Terminating", Program.EnvInfo);
 
                 ApplicationContainer.Dispose();
