@@ -1,33 +1,32 @@
-﻿using Autofac;
+﻿using System;
+using System.Threading.Tasks;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Common.Log;
 using JetBrains.Annotations;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
+using Lykke.AlgoStore.Job.GDPR.Modules;
+using Lykke.AlgoStore.Job.GDPR.Settings;
 using Lykke.Common;
+using Lykke.Common.Api.Contract.Responses;
 using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
-using Lykke.Common.Api.Contract.Responses;
 using Lykke.Common.Log;
-using Lykke.Job.GDPR.Core.Services;
-using Lykke.Job.GDPR.Settings;
-using Lykke.Job.GDPR.Modules;
 using Lykke.Logs;
 using Lykke.SettingsReader;
-using Lykke.MonitoringServiceApiCaller;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
-using System;
-using System.Threading.Tasks;
 
-namespace Lykke.Job.GDPR
+namespace Lykke.AlgoStore.Job.GDPR
 {
     [PublicAPI]
     public class Startup
     {
         private const string ApiVersion = "v1";
-        private const string ApiName = "GDPR API";
+        private const string ApiName = "AlgoStore GDPR API";
 
         private string _monitoringServiceUrl;
         private ILog _log;

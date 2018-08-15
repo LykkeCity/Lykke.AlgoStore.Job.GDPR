@@ -1,6 +1,6 @@
 ﻿using Lykke.SettingsReader.Attributes;
 
-namespace Lykke.Job.GDPR.Settings
+namespace Lykke.AlgoStore.Job.GDPR.Settings
 {
     public class MonitoringServiceClientSettings
     {

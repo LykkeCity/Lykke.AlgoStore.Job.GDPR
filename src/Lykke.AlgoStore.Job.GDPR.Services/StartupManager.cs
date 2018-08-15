@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Common.Log;
-using Lykke.Job.GDPR.Core.Services;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
 
-namespace Lykke.Job.GDPR.Services
+namespace Lykke.AlgoStore.Job.GDPR.Services
 {
     // NOTE: Sometimes, startup process which is expressed explicitly is not just better, 
     // but the only way. If this is your case, use this class to manage startup.

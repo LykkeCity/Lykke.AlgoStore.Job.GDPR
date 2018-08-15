@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Net;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
+using Lykke.Common.Api.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Lykke.Common.Api.Contract.Responses;
-using Lykke.Job.GDPR.Core.Services;
 
-namespace Lykke.Job.GDPR.Controllers
+namespace Lykke.AlgoStore.Job.GDPR.Controllers
 {
     // NOTE: See https://lykkex.atlassian.net/wiki/spaces/LKEWALLET/pages/35755585/Add+your+app+to+Monitoring
     [Route("api/[controller]")]

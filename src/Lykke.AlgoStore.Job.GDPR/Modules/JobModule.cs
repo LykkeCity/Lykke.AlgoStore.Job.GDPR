@@ -1,13 +1,12 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Common.Log;
-using Lykke.Job.GDPR.Core.Services;
-using Lykke.Job.GDPR.Services;
-using Lykke.Job.GDPR.Settings.JobSettings;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
+using Lykke.AlgoStore.Job.GDPR.Services;
+using Lykke.AlgoStore.Job.GDPR.Settings.JobSettings;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lykke.Job.GDPR.Modules
+namespace Lykke.AlgoStore.Job.GDPR.Modules
 {
     public class JobModule : Module
     {

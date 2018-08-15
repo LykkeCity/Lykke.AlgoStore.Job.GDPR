@@ -1,8 +1,8 @@
-﻿using Lykke.Common.Health;
-using Lykke.Job.GDPR.Core.Services;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
+using Lykke.Common.Health;
 
-namespace Lykke.Job.GDPR.Services
+namespace Lykke.AlgoStore.Job.GDPR.Services
 {
     // NOTE: See https://lykkex.atlassian.net/wiki/spaces/LKEWALLET/pages/35755585/Add+your+app+to+Monitoring
     public class HealthService : IHealthService

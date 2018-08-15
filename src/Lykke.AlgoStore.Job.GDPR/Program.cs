@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.PlatformAbstractions;
 
-namespace Lykke.Job.GDPR
+namespace Lykke.AlgoStore.Job.GDPR
 {
     internal sealed class Program
     {

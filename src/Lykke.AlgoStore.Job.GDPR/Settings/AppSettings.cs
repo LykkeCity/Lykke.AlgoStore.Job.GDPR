@@ -1,8 +1,8 @@
-﻿using Lykke.Job.GDPR.Settings.JobSettings;
-using Lykke.Job.GDPR.Settings.SlackNotifications;
+﻿using Lykke.AlgoStore.Job.GDPR.Settings.JobSettings;
+using Lykke.AlgoStore.Job.GDPR.Settings.SlackNotifications;
 using Lykke.SettingsReader.Attributes;
 
-namespace Lykke.Job.GDPR.Settings
+namespace Lykke.AlgoStore.Job.GDPR.Settings
 {
     public class AppSettings
     {

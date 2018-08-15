@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
 using Lykke.Common.Log;
-using Lykke.Job.GDPR.Core.Services;
 
-namespace Lykke.Job.GDPR.Services
+namespace Lykke.AlgoStore.Job.GDPR.Services
 {
     // NOTE: Sometimes, shutdown process should be expressed explicitly. 
     // If this is your case, use this class to manage shutdown.

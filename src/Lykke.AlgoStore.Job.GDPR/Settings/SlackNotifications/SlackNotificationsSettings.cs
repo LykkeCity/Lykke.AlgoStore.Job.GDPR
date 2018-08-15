@@ -1,4 +1,4 @@
-﻿namespace Lykke.Job.GDPR.Settings.SlackNotifications
+﻿namespace Lykke.AlgoStore.Job.GDPR.Settings.SlackNotifications
 {
     public class SlackNotificationsSettings
     {
