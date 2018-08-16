@@ -1,4 +1,4 @@
 FROM microsoft/dotnet:2.1-aspnetcore-runtime
 WORKDIR /app
 COPY . .
-ENTRYPOINT ["dotnet", "Lykke.Job.GDPR.dll"]
+ENTRYPOINT ["dotnet", "Lykke.AlgoStore.Job.GDPR.dll"]
