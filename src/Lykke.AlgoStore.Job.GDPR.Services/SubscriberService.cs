@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace Lykke.AlgoStore.Job.GDPR.Services
 {
-    public class UsersService : IUsersService
+    public class SubscriberService : ISubscriberService
     {
-        private readonly IUsersRepository _usersRepository;
+        private readonly ISubscriberRepository _usersRepository;
         private readonly IAlgoClientInstanceRepository _instanceRepository;
         private readonly IAlgoCommentsRepository _commentsRepository;
         private readonly ISecurityClient _securityClient;
@@ -22,7 +22,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         private readonly IAlgoRepository _algoRepository;
 
 
-        public UsersService(IUsersRepository usersRepository,
+        public SubscriberService(ISubscriberRepository usersRepository,
             IAlgoCommentsRepository commentsRepository,
             ISecurityClient securityClient,
             IAlgoInstanceStoppingClient algoInstanceStoppingClient,
@@ -43,7 +43,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
             if (entity == null)
             {
-                entity = new UserData
+                entity = new SubscriberData
                 {
                     ClientId = clientId,
                     CookieConsent = false,
@@ -55,7 +55,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
             await _usersRepository.UpdateAsync(entity);
         }
 
-        public async Task<UserData> GetByIdAsync(string clientId)
+        public async Task<SubscriberData> GetByIdAsync(string clientId)
         {
             var result = await _usersRepository.GetByIdAsync(clientId);
 
@@ -68,7 +68,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
             if (entity == null)
             {
-                entity = new UserData
+                entity = new SubscriberData
                 {
                     ClientId = clientId
                 };
@@ -90,7 +90,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
             if (entity == null)
             {
-                entity = new UserData
+                entity = new SubscriberData
                 {
                     ClientId = clientId
                 };

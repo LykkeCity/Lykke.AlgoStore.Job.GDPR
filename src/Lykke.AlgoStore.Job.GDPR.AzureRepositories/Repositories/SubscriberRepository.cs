@@ -6,34 +6,34 @@ using System.Threading.Tasks;
 
 namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories
 {
-    public class UsersRepository : IUsersRepository
+    public class SubscriberRepository : ISubscriberRepository
     {
-        public static readonly string TableName = "Users";
-        private static readonly string PartitionKey = "User";
+        public static readonly string TableName = "AlgoStoreSubscribers";
+        private static readonly string PartitionKey = "Subscriber";
 
-        private readonly INoSQLTableStorage<UserEntity> _table;
+        private readonly INoSQLTableStorage<SubscriberEntity> _table;
 
-        public UsersRepository(INoSQLTableStorage<UserEntity> table)
+        public SubscriberRepository(INoSQLTableStorage<SubscriberEntity> table)
         {
             _table = table;
         }
 
-        public async Task SaveAsync(UserData data)
+        public async Task SaveAsync(SubscriberData data)
         {
-            var entity = AutoMapper.Mapper.Map<UserEntity>(data);
+            var entity = AutoMapper.Mapper.Map<SubscriberEntity>(data);
             entity.PartitionKey = PartitionKey;
             await _table.InsertOrReplaceAsync(entity);
         }
 
-        public async Task<UserData> GetByIdAsync(string clientId)
+        public async Task<SubscriberData> GetByIdAsync(string clientId)
         {
             var result = await _table.GetDataAsync(PartitionKey, clientId);
-            return AutoMapper.Mapper.Map<UserData>(result);
+            return AutoMapper.Mapper.Map<SubscriberData>(result);
         }
 
-        public async Task UpdateAsync(UserData data)
+        public async Task UpdateAsync(SubscriberData data)
         {
-            var entity = AutoMapper.Mapper.Map<UserEntity>(data);
+            var entity = AutoMapper.Mapper.Map<SubscriberEntity>(data);
             entity.PartitionKey = PartitionKey;
             await _table.InsertOrReplaceAsync(entity);
         }

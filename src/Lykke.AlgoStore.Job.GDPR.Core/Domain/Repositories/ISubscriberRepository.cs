@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 
 namespace Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories
 {
-    public interface IUsersRepository
+    public interface ISubscriberRepository
     {
-        Task<UserData> GetByIdAsync(string clientId);
-        Task SaveAsync(UserData data);
-        Task UpdateAsync(UserData data);
+        Task<SubscriberData> GetByIdAsync(string clientId);
+        Task SaveAsync(SubscriberData data);
+        Task UpdateAsync(SubscriberData data);
         Task DeleteAsync(string clientId);
     }
 }

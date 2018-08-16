@@ -19,9 +19,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
     public class GdprControllerTests
     {
         private readonly Fixture _fixture = new Fixture();
-        private Mock<IUsersService> _usersServiceMock;
+        private Mock<ISubscriberService> _usersServiceMock;
         private Mock<ILog> _logMock;
-        private GdprController _controller;
+        private SubscribersController _controller;
         private Mock<HttpContext> _httpContextMock;
 
         [SetUp]
@@ -43,12 +43,12 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             //_logMock.Setup(x => x.LogElapsedTimeAsync(It.IsAny<string>(), It.IsAny<Func<Task<UserData>>>()))
             //    .Returns(Task.FromResult(_fixture.Build<UserData>().Create()));
 
-            _usersServiceMock = new Mock<IUsersService>();
+            _usersServiceMock = new Mock<ISubscriberService>();
 
             _httpContextMock = new Mock<HttpContext>();
             _httpContextMock.Setup(x => x.Request.Headers.Add("TEST", It.IsAny<string>()));
 
-            _controller = new GdprController(_usersServiceMock.Object, _logMock.Object)
+            _controller = new SubscribersController(_usersServiceMock.Object, _logMock.Object)
                 {ControllerContext = new ControllerContext {HttpContext = _httpContextMock.Object}};
         }
 

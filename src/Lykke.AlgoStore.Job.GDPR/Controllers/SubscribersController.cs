@@ -11,25 +11,25 @@ using System.Threading.Tasks;
 namespace Lykke.AlgoStore.Job.GDPR.Controllers
 {
     [Authorize]
-    [Route("api/v1/users")]
-    public class GdprController: Controller
+    [Route("api/v1/subscribers")]
+    public class SubscribersController: Controller
     {
-        private readonly IUsersService _usersService;
+        private readonly ISubscriberService _usersService;
         private readonly ILog _log;
 
-        public GdprController(IUsersService usersService, ILog log)
+        public SubscribersController(ISubscriberService usersService, ILog log)
         {
             _usersService = usersService;
             _log = log;
         }
 
         [HttpGet("legalConsents")]
-        [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(SubscriberModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetLegalConsents(string clientId)
         {
             var result = await _log.LogElapsedTimeAsync(clientId, async () => await _usersService.GetByIdAsync(clientId));
 
-            return Ok(Mapper.Map<UserModel>(result));
+            return Ok(Mapper.Map<SubscriberModel>(result));
         }
 
         [HttpPost("gdprConsent")]

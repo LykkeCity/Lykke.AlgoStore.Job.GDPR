@@ -1,6 +1,6 @@
 ﻿namespace Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities
 {
-    public class UserData
+    public class SubscriberData
     {
         public string ClientId { get; set; }
         public bool GdprConsent { get; set; }
