@@ -13,6 +13,8 @@ namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories
 
         private readonly INoSQLTableStorage<SubscriberEntity> _table;
 
+        public static string GenerateRowKey(string key) => key;
+
         public SubscriberRepository(INoSQLTableStorage<SubscriberEntity> table)
         {
             _table = table;
@@ -22,12 +24,15 @@ namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories
         {
             var entity = AutoMapper.Mapper.Map<SubscriberEntity>(data);
             entity.PartitionKey = PartitionKey;
+            entity.RowKey = GenerateRowKey(data.ClientId);
+
             await _table.InsertOrReplaceAsync(entity);
         }
 
         public async Task<SubscriberData> GetByIdAsync(string clientId)
         {
             var result = await _table.GetDataAsync(PartitionKey, clientId);
+
             return AutoMapper.Mapper.Map<SubscriberData>(result);
         }
 
@@ -35,6 +40,8 @@ namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories
         {
             var entity = AutoMapper.Mapper.Map<SubscriberEntity>(data);
             entity.PartitionKey = PartitionKey;
+            entity.RowKey = GenerateRowKey(data.ClientId);
+
             await _table.InsertOrReplaceAsync(entity);
         }
 

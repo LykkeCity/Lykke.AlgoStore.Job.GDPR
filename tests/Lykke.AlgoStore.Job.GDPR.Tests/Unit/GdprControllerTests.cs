@@ -31,7 +31,11 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             //Reset should not be used in production code. It is intended to support testing scenarios only.
             Mapper.Reset();
 
-            Mapper.Initialize(cfg => { cfg.AddProfile<AutoMapperModelProfile>(); });
+            Mapper.Initialize(cfg =>
+            {
+                cfg.AddProfile<AutoMapperModelProfile>();
+                cfg.AddProfile<AutoMapperProfile>();
+            });
 
             Mapper.AssertConfigurationIsValid();
 
