@@ -2,9 +2,6 @@
 using Lykke.AlgoStore.Job.GDPR.AzureRepositories.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories

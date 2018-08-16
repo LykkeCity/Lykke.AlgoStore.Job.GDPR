@@ -8,9 +8,7 @@ using Lykke.AlgoStore.Job.GDPR.Services.Strings;
 using Lykke.AlgoStore.Job.Stopping.Client;
 using Lykke.AlgoStore.Service.Security.Client;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.AlgoStore.Job.GDPR.Services

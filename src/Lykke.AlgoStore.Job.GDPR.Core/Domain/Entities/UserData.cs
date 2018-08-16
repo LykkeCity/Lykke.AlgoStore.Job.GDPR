@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities
+﻿namespace Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities
 {
     public class UserData
     {

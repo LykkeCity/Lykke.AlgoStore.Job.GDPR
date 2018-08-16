@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lykke.AlgoStore.Job.GDPR.Models
+﻿namespace Lykke.AlgoStore.Job.GDPR.Models
 {
     public class UserModel
     {
