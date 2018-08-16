@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Lykke.Common.Log;
 
 namespace Lykke.AlgoStore.Job.GDPR.Core.Utils
 {
@@ -33,7 +34,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Core.Utils
                 var elapsed = sw.ElapsedMilliseconds;
                 var message = $"Client {clientId} executed {methodName} for {elapsed}ms with HasError={hasError}";
 
-                log.WriteInfoAsync(Constants.ComponentName, context, message).Wait();
+                log.Info(Constants.ComponentName, message, context);
             }
         }
 
@@ -63,7 +64,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Core.Utils
                 var elapsed = sw.ElapsedMilliseconds;
                 var message = $"Client {clientId} executed {methodName} for {elapsed}ms with HasError={hasError}";
 
-                log.WriteInfoAsync(Constants.ComponentName, context, message).Wait();
+                log.Info(Constants.ComponentName, message, context);
             }
         }
     }
