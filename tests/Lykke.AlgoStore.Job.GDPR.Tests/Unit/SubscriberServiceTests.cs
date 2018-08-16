@@ -9,6 +9,7 @@ using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
 using Lykke.AlgoStore.Job.GDPR.Core.Services;
 using Lykke.AlgoStore.Job.GDPR.Services;
+using Lykke.AlgoStore.Job.GDPR.Services.Strings;
 using Lykke.AlgoStore.Job.Stopping.Client;
 using Lykke.AlgoStore.Service.Security.Client;
 using Moq;
@@ -56,7 +57,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void SeedAsync_ForEmprtyRequest_WillThrowException_Test()
         {
-            Assert.ThrowsAsync<ValidationException>(() => _service.SeedAsync(string.Empty));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SeedAsync(string.Empty));
+
+            Assert.That(ex.Message, Is.EqualTo(Phrases.ClientIdEmpty));
         }
 
         [Test]
@@ -74,7 +77,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void GetByIdAsync_ForEmprtyRequest_WillThrowException_Test()
         {
-            Assert.ThrowsAsync<ValidationException>(() => _service.GetByIdAsync(string.Empty));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.GetByIdAsync(string.Empty));
+
+            Assert.That(ex.Message, Is.EqualTo(Phrases.ClientIdEmpty));
         }
 
         [Test]
@@ -94,7 +99,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void SetCookieConsentAsync_ForEmprtyRequest_WillThrowException_Test()
         {
-            Assert.ThrowsAsync<ValidationException>(() => _service.SetCookieConsentAsync(string.Empty));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetCookieConsentAsync(string.Empty));
+
+            Assert.That(ex.Message, Is.EqualTo(Phrases.ClientIdEmpty));
         }
 
         [Test]
@@ -126,7 +133,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void SetGdprConsentAsync_ForEmprtyRequest_WillThrowException_Test()
         {
-            Assert.ThrowsAsync<ValidationException>(() => _service.SetGdprConsentAsync(string.Empty));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetGdprConsentAsync(string.Empty));
+
+            Assert.That(ex.Message, Is.EqualTo(Phrases.ClientIdEmpty));
         }
 
         [Test]
@@ -158,7 +167,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void DeactivateAccountAsync_ForEmprtyRequest_WillThrowException_Test()
         {
-            Assert.ThrowsAsync<ValidationException>(() => _service.DeactivateAccountAsync(string.Empty));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.DeactivateAccountAsync(string.Empty));
+
+            Assert.That(ex.Message, Is.EqualTo(Phrases.ClientIdEmpty));
         }
 
         [Test]
