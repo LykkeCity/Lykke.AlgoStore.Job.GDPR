@@ -51,7 +51,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                     {
                         ClientId = clientId,
                         CookieConsent = false,
-                        GDPRConsent = false
+                        GDPRConsent = false,
+                        DeletionStatus = DeletionStatus.None
                     };
                 }
 
@@ -116,6 +117,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
         public async Task DeactivateAccountAsync(string clientId)
         {
+                // probably set deletion status here? 
+
                 // first get all comments made by the user and unlink his id from author field
                 var comments = await _commentsRepository.GetAllAsync();
                 var userComments = comments.FindAll(c => c.Author == clientId);
