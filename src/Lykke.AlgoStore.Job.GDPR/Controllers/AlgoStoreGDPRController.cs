@@ -12,12 +12,12 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
 {
     [Authorize]
     [Route("api/v1/users")]
-    public class AlgoStoreGDPRController: Controller
+    public class AlgoStoreGdprController: Controller
     {
         private readonly IUsersService _usersService;
         private readonly ILog _log;
 
-        public AlgoStoreGDPRController(IUsersService usersService, ILog log)
+        public AlgoStoreGdprController(IUsersService usersService, ILog log)
         {
             _usersService = usersService;
             _log = log;
@@ -34,9 +34,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
 
         [HttpPost("gdprConsent")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> SetUserGDPRConsent([FromBody] string clientId)
+        public async Task<IActionResult> SetUserGdprConsent([FromBody] string clientId)
         {
-            await _log.LogElapsedTimeAsync(null, async () => await _usersService.SetGDPRConsentAsync(clientId));
+            await _log.LogElapsedTimeAsync(null, async () => await _usersService.SetGdprConsentAsync(clientId));
 
             return NoContent();
         }

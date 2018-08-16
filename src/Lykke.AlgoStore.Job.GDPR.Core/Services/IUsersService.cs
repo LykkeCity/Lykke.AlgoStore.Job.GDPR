@@ -7,7 +7,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Core.Services
     {
         Task SeedAsync(string clientId);
         Task<UserData> GetByIdAsync(string clientId);
-        Task SetGDPRConsentAsync(string clientId);
+        Task SetGdprConsentAsync(string clientId);
         Task SetCookieConsentAsync(string clientId);
         Task DeactivateAccountAsync(string clientId);
     }

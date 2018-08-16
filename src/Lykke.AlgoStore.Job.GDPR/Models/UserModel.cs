@@ -3,7 +3,7 @@
     public class UserModel
     {
         public string ClientId { get; set; }
-        public bool GDPRConsent { get; set; }
+        public bool GdprConsent { get; set; }
         public bool CookieConsent { get; set; }
     }
 }

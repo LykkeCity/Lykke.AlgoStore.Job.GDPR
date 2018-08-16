@@ -76,7 +76,7 @@ namespace Lykke.AlgoStore.Job.GDPR
                     _monitoringServiceUrl = appSettings.MonitoringServiceClient.MonitoringServiceUrl;
 
                 services.AddLykkeLogging(
-                    settingsManager.ConnectionString(s => s.AlgoStoreGDPRJob.Db.LogsConnectionString),
+                    settingsManager.ConnectionString(s => s.AlgoStoreGdprJob.Db.LogsConnectionString),
                     "GDPRLog",
                     appSettings.SlackNotifications.AzureQueue.ConnectionString,
                     appSettings.SlackNotifications.AzureQueue.QueueName);
@@ -84,7 +84,7 @@ namespace Lykke.AlgoStore.Job.GDPR
                 var builder = new ContainerBuilder();
                 builder.Populate(services);
 
-                builder.RegisterModule(new JobModule(appSettings.AlgoStoreGDPRJob, settingsManager.Nested(x => x.AlgoStoreGDPRJob)));
+                builder.RegisterModule(new JobModule(appSettings.AlgoStoreGdprJob, settingsManager.Nested(x => x.AlgoStoreGdprJob)));
 
                 ApplicationContainer = builder.Build();
 

@@ -10,12 +10,12 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
 {
     public class JobModule : Module
     {
-        private readonly GDPRSettings _settings;
-        private readonly IReloadingManager<GDPRSettings> _settingsManager;
+        private readonly GdprSettings _settings;
+        private readonly IReloadingManager<GdprSettings> _settingsManager;
         // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
         private readonly IServiceCollection _services;
 
-        public JobModule(GDPRSettings settings, IReloadingManager<GDPRSettings> settingsManager)
+        public JobModule(GdprSettings settings, IReloadingManager<GdprSettings> settingsManager)
         {
             _settings = settings;
             _settingsManager = settingsManager;

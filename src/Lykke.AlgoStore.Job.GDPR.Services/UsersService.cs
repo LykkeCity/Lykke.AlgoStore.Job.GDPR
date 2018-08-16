@@ -49,7 +49,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                     {
                         ClientId = clientId,
                         CookieConsent = false,
-                        GDPRConsent = false,
+                        GdprConsent = false,
                         DeletionStatus = DeletionStatus.None
                     };
                 }
@@ -86,7 +86,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                 await _usersRepository.UpdateAsync(entity);
         }
 
-        public async Task SetGDPRConsentAsync(string clientId)
+        public async Task SetGdprConsentAsync(string clientId)
         {
                 var entity = await _usersRepository.GetByIdAsync(clientId);
 
@@ -98,12 +98,12 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                     };
                 }
 
-                if (entity.GDPRConsent)
+                if (entity.GdprConsent)
                 {
                     throw new ValidationException(string.Format(Phrases.ConsentAlreadyGiven, "GDPR", clientId));
                 }
 
-                entity.GDPRConsent = true;
+                entity.GdprConsent = true;
 
                 await _usersRepository.UpdateAsync(entity);
         }

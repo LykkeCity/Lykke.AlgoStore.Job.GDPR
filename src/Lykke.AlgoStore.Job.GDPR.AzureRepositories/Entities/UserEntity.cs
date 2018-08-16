@@ -5,7 +5,7 @@ namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Entities
 {
     public class UserEntity : TableEntity
     {
-        public bool GDPRConsent { get; set; }
+        public bool GdprConsent { get; set; }
         public bool CookieConsent { get; set; }
         public DeletionStatus DeletionStatus { get; set; }
     }

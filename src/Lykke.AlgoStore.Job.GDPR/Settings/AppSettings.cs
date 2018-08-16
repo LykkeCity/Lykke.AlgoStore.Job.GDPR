@@ -6,7 +6,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Settings
 {
     public class AppSettings
     {
-        public GDPRSettings AlgoStoreGDPRJob { get; set; }
+        public GdprSettings AlgoStoreGdprJob { get; set; }
 
         public SlackNotificationsSettings SlackNotifications { get; set; }
 
