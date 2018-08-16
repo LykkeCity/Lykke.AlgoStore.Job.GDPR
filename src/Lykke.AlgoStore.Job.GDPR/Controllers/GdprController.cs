@@ -12,12 +12,12 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
 {
     [Authorize]
     [Route("api/v1/users")]
-    public class AlgoStoreGdprController: Controller
+    public class GdprController: Controller
     {
         private readonly IUsersService _usersService;
         private readonly ILog _log;
 
-        public AlgoStoreGdprController(IUsersService usersService, ILog log)
+        public GdprController(IUsersService usersService, ILog log)
         {
             _usersService = usersService;
             _log = log;
