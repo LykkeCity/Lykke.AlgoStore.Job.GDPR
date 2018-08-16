@@ -4,6 +4,24 @@
     <Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Lykke.AlgoStore.CSharp.AlgoTemplate.Models" Version="1.0.76" />
+    <PackageReference Include="Lykke.AlgoStore.Job.Stopping.Client" Version="1.0.6" />
+    <PackageReference Include="Lykke.AlgoStore.Service.Security.Client" Version="1.0.9" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Lykke.AlgoStore.Job.GDPR.Core\Lykke.AlgoStore.Job.GDPR.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Strings\Phrases.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Phrases.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Strings\Phrases.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Phrases.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
