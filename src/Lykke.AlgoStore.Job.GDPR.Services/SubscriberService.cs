@@ -39,6 +39,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
         public async Task SeedAsync(string clientId)
         {
+            ValidateClientId(clientId);
+
             var entity = await _usersRepository.GetByIdAsync(clientId);
 
             if (entity == null)
@@ -57,6 +59,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
         public async Task<SubscriberData> GetByIdAsync(string clientId)
         {
+            ValidateClientId(clientId);
+
             var result = await _usersRepository.GetByIdAsync(clientId);
 
             return result;
@@ -64,6 +68,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
         public async Task SetCookieConsentAsync(string clientId)
         {
+            ValidateClientId(clientId);
+
             var entity = await _usersRepository.GetByIdAsync(clientId);
 
             if (entity == null)
@@ -86,6 +92,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
         public async Task SetGdprConsentAsync(string clientId)
         {
+            ValidateClientId(clientId);
+
             var entity = await _usersRepository.GetByIdAsync(clientId);
 
             if (entity == null)
@@ -106,13 +114,10 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
             await _usersRepository.UpdateAsync(entity);
         }
 
-        public async Task RemoveUserConsents(string clientId)
-        {
-            await _usersRepository.DeleteAsync(clientId);
-        }
-
         public async Task DeactivateAccountAsync(string clientId)
         {
+            ValidateClientId(clientId);
+
             // probably set deletion status here? 
 
             // first get all comments made by the user and unlink his id from author field
@@ -167,6 +172,22 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                 algoToSave.DateModified = DateTime.Now;
                 await _algoRepository.SaveAlgoWithNewPKAsync(algoToSave, algo.ClientId);
             }
+        }
+
+        private async Task RemoveUserConsents(string clientId)
+        {
+            ValidateClientId(clientId);
+
+            await _usersRepository.DeleteAsync(clientId);
+        }
+
+        private void ValidateClientId(string clientId)
+        {
+            if(clientId == null)
+                throw new ArgumentNullException(nameof(clientId));
+
+            if(clientId == String.Empty)
+                throw new ValidationException(Phrases.ClientIdEmpty);
         }
     }
 }

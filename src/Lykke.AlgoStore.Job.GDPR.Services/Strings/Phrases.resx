@@ -120,4 +120,7 @@
   <data name="ConsentAlreadyGiven" xml:space="preserve">
     <value>{0} consent has already been given for clientId {1}</value>
   </data>
+  <data name="ClientIdEmpty" xml:space="preserve">
+    <value>ClientId cannot be empty</value>
+  </data>
 </root>

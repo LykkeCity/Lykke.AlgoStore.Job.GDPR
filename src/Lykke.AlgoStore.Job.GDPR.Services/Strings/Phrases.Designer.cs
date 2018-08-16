@@ -61,6 +61,15 @@ namespace Lykke.AlgoStore.Job.GDPR.Services.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClientId cannot be empty.
+        /// </summary>
+        internal static string ClientIdEmpty {
+            get {
+                return ResourceManager.GetString("ClientIdEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} consent has already been given for clientId {1}.
         /// </summary>
         internal static string ConsentAlreadyGiven {
