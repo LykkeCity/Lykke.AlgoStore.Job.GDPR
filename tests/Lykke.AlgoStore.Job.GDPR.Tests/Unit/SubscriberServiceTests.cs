@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using AutoFixture;
 using AutoMapper;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Repositories;
+using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
 using Lykke.AlgoStore.Job.GDPR.Core.Services;
 using Lykke.AlgoStore.Job.GDPR.Services;
@@ -17,8 +19,15 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
     [TestFixture]
     public class SubscriberServiceTests
     {
+        private const string ClientId = "TEST";
         private readonly Fixture _fixture = new Fixture();
         private ISubscriberService _service;
+        private Mock<ISubscriberRepository> _subscriberRepositoryMock;
+        private Mock<IAlgoCommentsRepository> _commentsRepositoryMock;
+        private Mock<ISecurityClient> _securityClientMock;
+        private Mock<IAlgoInstanceStoppingClient> _instanceStoppingClientMock;
+        private Mock<IAlgoClientInstanceRepository> _clientInstanceRepositoryMock;
+        private Mock<IAlgoRepository> _algoRepositoryMock;
 
         [SetUp]
         public void SetUp()
@@ -53,7 +62,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void SeedAsync_ForValidRequest_WillSucceed_Test()
         {
-            _service.SeedAsync(It.IsAny<string>());
+            _service.SeedAsync(ClientId).Wait();
         }
 
         [Test]
@@ -71,7 +80,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void GetByIdAsync_ForValidRequest_WillSucceed_Test()
         {
-            var data = _service.GetByIdAsync(It.IsAny<string>());
+            var data = _service.GetByIdAsync(ClientId).Result;
 
             Assert.NotNull(data);
         }
@@ -91,9 +100,21 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void SetCookieConsentAsync_ForValidRequest_WillSucceed_Test()
         {
-            var data = _service.SetCookieConsentAsync(It.IsAny<string>());
+            _service.SetCookieConsentAsync(ClientId).Wait();
+        }
 
-            Assert.NotNull(data);
+        [Test]
+        public void SetCookieConsentAsync_ForValidRequest_WhenConsentIsAlreadyGiven_WillThrowException_Test()
+        {
+            _subscriberRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(_fixture.Build<SubscriberData>().With(x => x.CookieConsent, true)
+                    .With(x => x.GdprConsent, false).Create()));
+
+            _service = new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
+                _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
+                _algoRepositoryMock.Object);
+
+            Assert.ThrowsAsync<ValidationException>(() => _service.SetCookieConsentAsync(ClientId));
         }
 
         [Test]
@@ -111,9 +132,21 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void SetGdprConsentAsync_ForValidRequest_WillSucceed_Test()
         {
-            var data = _service.SetGdprConsentAsync(It.IsAny<string>());
+            _service.SetGdprConsentAsync(ClientId).Wait();
+        }
 
-            Assert.NotNull(data);
+        [Test]
+        public void SetGdprConsentAsync_ForValidRequest_WhenConsentIsAlreadyGiven_WillThrowException_Test()
+        {
+            _subscriberRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(_fixture.Build<SubscriberData>().With(x => x.CookieConsent, false)
+                    .With(x => x.GdprConsent, true).Create()));
+
+            _service = new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
+                _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
+                _algoRepositoryMock.Object);
+
+            Assert.ThrowsAsync<ValidationException>(() => _service.SetGdprConsentAsync(ClientId));
         }
 
         [Test]
@@ -138,16 +171,20 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
         private ISubscriberService MockService()
         {
-            var subscriberRepositoryMock = new Mock<ISubscriberRepository>();
-            var commentsRepositoryMock = new Mock<IAlgoCommentsRepository>();
-            var securityClientMock = new Mock<ISecurityClient>();
-            var instanceStoppingClientMock = new Mock<IAlgoInstanceStoppingClient>();
-            var clientInstanceRepositoryMock = new Mock<IAlgoClientInstanceRepository>();
-            var algoRepositoryMock = new Mock<IAlgoRepository>();
+            _subscriberRepositoryMock = new Mock<ISubscriberRepository>();
+            _subscriberRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<string>()))
+                .Returns(Task.FromResult(_fixture.Build<SubscriberData>().With(x => x.CookieConsent, false)
+                    .With(x => x.GdprConsent, false).Create()));
 
-            return new SubscriberService(subscriberRepositoryMock.Object, commentsRepositoryMock.Object,
-                securityClientMock.Object, instanceStoppingClientMock.Object, clientInstanceRepositoryMock.Object,
-                algoRepositoryMock.Object);
+            _commentsRepositoryMock = new Mock<IAlgoCommentsRepository>();
+            _securityClientMock = new Mock<ISecurityClient>();
+            _instanceStoppingClientMock = new Mock<IAlgoInstanceStoppingClient>();
+            _clientInstanceRepositoryMock = new Mock<IAlgoClientInstanceRepository>();
+            _algoRepositoryMock = new Mock<IAlgoRepository>();
+
+            return new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
+                _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
+                _algoRepositoryMock.Object);
         }
     }
 }
