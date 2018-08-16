@@ -4,7 +4,7 @@
     <Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.AlgoStore.CSharp.AlgoTemplate.Models" Version="1.0.76" />
+    <PackageReference Include="Lykke.AlgoStore.CSharp.AlgoTemplate.Models" Version="1.0.77" />
     <PackageReference Include="Lykke.AlgoStore.Job.Stopping.Client" Version="1.0.6" />
     <PackageReference Include="Lykke.AlgoStore.Service.Security.Client" Version="1.0.9" />
   </ItemGroup>
