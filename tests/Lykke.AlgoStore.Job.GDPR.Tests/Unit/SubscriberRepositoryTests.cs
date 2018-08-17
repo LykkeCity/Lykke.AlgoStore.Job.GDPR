@@ -2,17 +2,13 @@
 using AutoFixture;
 using AutoMapper;
 using AzureStorage;
-using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Entities;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
-using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Repositories;
 using Lykke.AlgoStore.Job.GDPR.AzureRepositories.Entities;
 using Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
-using Microsoft.WindowsAzure.Storage.Table;
 using Moq;
 using NUnit.Framework;
-using FluentAssertions;
 
 namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 {

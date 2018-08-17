@@ -1,7 +1,5 @@
-﻿using System;
-using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
+﻿using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
 using Lykke.AzureStorage.Tables;
-using Lykke.AzureStorage.Tables.Entity.Annotation;
 
 namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Entities
 {

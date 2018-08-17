@@ -3,7 +3,6 @@ using Common.Log;
 using Lykke.AlgoStore.Job.GDPR.Core.Services;
 using Lykke.AlgoStore.Job.GDPR.Core.Utils;
 using Lykke.AlgoStore.Job.GDPR.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;

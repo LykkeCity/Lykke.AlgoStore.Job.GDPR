@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Net;
-using Lykke.AlgoStore.Job.GDPR.Core.Services;
+﻿using System.Net;
 using Lykke.Common.Api.Contract.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;

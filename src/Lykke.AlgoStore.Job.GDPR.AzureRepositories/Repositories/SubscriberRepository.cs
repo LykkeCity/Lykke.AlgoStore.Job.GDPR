@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using AzureStorage;
 using Lykke.AlgoStore.Job.GDPR.AzureRepositories.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;

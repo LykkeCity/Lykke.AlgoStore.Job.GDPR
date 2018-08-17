@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoMapper;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
 using Lykke.AlgoStore.Job.GDPR.Client;
-using Lykke.AlgoStore.Job.GDPR.Client.Model;
 using NUnit.Framework;
 
 namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit

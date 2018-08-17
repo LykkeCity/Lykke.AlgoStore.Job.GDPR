@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoMapper;
 using Common.Log;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
