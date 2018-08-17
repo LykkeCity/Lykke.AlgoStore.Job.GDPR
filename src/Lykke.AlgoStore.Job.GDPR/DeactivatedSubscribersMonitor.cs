@@ -1,10 +1,9 @@
 ﻿using Common.Log;
-using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
 using Lykke.AlgoStore.Job.GDPR.Settings.JobSettings;
 using Lykke.Common.Log;
 using System;
 using System.Threading.Tasks;
-using Lykke.AlgoStore.Job.GDPR.Core.Services;
 
 namespace Lykke.AlgoStore.Job.GDPR
 {
@@ -12,16 +11,14 @@ namespace Lykke.AlgoStore.Job.GDPR
     {
         private readonly DeactivatedSubscribersMonitorSettings _settings;
         private readonly ILog _log;
-        private readonly ISubscriberRepository _subscriberRepository;
         private readonly ISubscriberService _subscriberService;
 
         public DeactivatedSubscribersMonitor(DeactivatedSubscribersMonitorSettings settings,
-            ILogFactory logFactory, ISubscriberRepository subscriberRepository,
-            ISubscriberService subscriberService)
+                                             ILogFactory logFactory,
+                                             ISubscriberService subscriberService)
         {
             _settings = settings;
             _log = logFactory.CreateLog(this);
-            _subscriberRepository = subscriberRepository;
             _subscriberService = subscriberService;
         }
 
@@ -34,12 +31,19 @@ namespace Lykke.AlgoStore.Job.GDPR
         {
             while (true)
             {
-                var deactivatedSubscribers = await _subscriberRepository.GetSuscribersToDeactivateAsync();
+                var deactivatedSubscribers = await _subscriberService.GetSuscribersToDeactivateAsync();
 
                 foreach (var deactivatedSubscriber in deactivatedSubscribers)
                 {
+                    _log.Info($"Deactivation process of user has started for clientId: {deactivatedSubscriber.ClientId}.");
+
                     await _subscriberService.DeactivateAccountAsync(deactivatedSubscriber.ClientId);
+
+                    await _subscriberService.DeleteDeactivatedSubscriberRow(deactivatedSubscriber.ClientId);
+
+                    _log.Info($"Deactivation process completed for clientId: {deactivatedSubscriber.ClientId}.");
                 }
+
                 await Task.Delay(TimeSpan.FromSeconds(_settings.CheckIntervalInSeconds));
             }
         }

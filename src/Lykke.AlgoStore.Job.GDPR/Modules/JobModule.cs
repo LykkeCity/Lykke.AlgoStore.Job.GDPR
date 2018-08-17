@@ -93,11 +93,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
             builder.RegisterAlgoInstanceStoppingClient(_settingsManager.CurrentValue.AlgoStoreStoppingClient.ServiceUrl,
                 logFactory.CreateLog(this));
 
-            builder.RegisterType<SecurityClient>()
-                .WithParameter("serviceUrl", _settingsManager.CurrentValue.AlgoStoreSecurityServiceClient.ServiceUrl)
-                .WithParameter("log", logFactory.CreateLog(this))
-                .As<ISecurityClient>()
-                .SingleInstance();
+            builder.RegisterSecurityClient(_settingsManager.CurrentValue.AlgoStoreSecurityServiceClient.ServiceUrl, logFactory.CreateLog(this));
+
         }
 
         private void RegisterLocalServices(ContainerBuilder builder)
