@@ -64,6 +64,7 @@ namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories
         public async Task DeleteAsync(string clientId)
         {
             await _table.DeleteIfExistAsync(PartitionKey, clientId);
+
             await _deactivatedSuscribersTable.InsertOrMergeAsync(new DeactivatedSuscriberEntity()
             {
                 PartitionKey = PartitionKeyDeactivate,

@@ -54,7 +54,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeactivateUserAccount([FromBody] string clientId)
         {
-            await _log.LogElapsedTimeAsync(clientId, async () => await _usersService.DeactivateAccountAsync(clientId));
+            await _log.LogElapsedTimeAsync(clientId, async () => await _usersService.RemoveUserConsents(clientId));
 
             return NoContent();
         }

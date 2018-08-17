@@ -10,5 +10,6 @@ namespace Lykke.AlgoStore.Job.GDPR.Core.Services
         Task SetGdprConsentAsync(string clientId);
         Task SetCookieConsentAsync(string clientId);
         Task DeactivateAccountAsync(string clientId);
+        Task RemoveUserConsents(string clientId);
     }
 }

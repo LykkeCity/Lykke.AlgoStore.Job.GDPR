@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Common.Log;
+﻿using Common.Log;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
 using Lykke.AlgoStore.Job.GDPR.Settings.JobSettings;
 using Lykke.Common.Log;
+using System;
+using System.Threading.Tasks;
 
 namespace Lykke.AlgoStore.Job.GDPR
 {

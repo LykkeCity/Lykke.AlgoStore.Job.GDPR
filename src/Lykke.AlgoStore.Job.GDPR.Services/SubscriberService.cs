@@ -94,24 +94,24 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         {
             ValidateClientId(clientId);
 
-            var entity = await _usersRepository.GetByIdAsync(clientId);
+            var subscriberData = await _usersRepository.GetByIdAsync(clientId);
 
-            if (entity == null)
+            if (subscriberData == null)
             {
-                entity = new SubscriberData
+                subscriberData = new SubscriberData
                 {
                     ClientId = clientId
                 };
             }
 
-            if (entity.GdprConsent)
+            if (subscriberData.GdprConsent)
             {
                 throw new ValidationException(Phrases.GdprConsentAlreadyGiven);
             }
 
-            entity.GdprConsent = true;
+            subscriberData.GdprConsent = true;
 
-            await _usersRepository.UpdateAsync(entity);
+            await _usersRepository.UpdateAsync(subscriberData);
         }
 
         public async Task DeactivateAccountAsync(string clientId)
@@ -149,9 +149,6 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                     });
             }
 
-            // remove user legal consent
-            await RemoveUserConsents(clientId);
-
             // find and stop all instances
             var instances = await _instanceRepository.GetAllAlgoInstancesByClientAsync(clientId);
 
@@ -174,7 +171,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
             }
         }
 
-        private async Task RemoveUserConsents(string clientId)
+        public async Task RemoveUserConsents(string clientId)
         {
             ValidateClientId(clientId);
 
