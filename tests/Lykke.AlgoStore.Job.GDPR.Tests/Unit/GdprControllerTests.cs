@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Threading.Tasks;
+using AutoFixture;
 using AutoMapper;
 using Common.Log;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
@@ -37,6 +38,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             Mapper.AssertConfigurationIsValid();
 
             _logFactoryMock = new Mock<ILogFactory>();
+            var logMock = new Mock<ILog>();
+
+            _logFactoryMock.Setup(x => x.CreateLog(It.IsAny<object>())).Returns(logMock.Object);
 
             //REMARK: Cannot mock extension methods, but it will work without mocking those :)
             //_logMock.Setup(x => x.LogElapsedTimeAsync(It.IsAny<string>(), It.IsAny<Func<Task>>()))

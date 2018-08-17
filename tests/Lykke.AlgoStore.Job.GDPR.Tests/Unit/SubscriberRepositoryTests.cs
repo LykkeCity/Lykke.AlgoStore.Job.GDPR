@@ -22,6 +22,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         private readonly Fixture _fixture = new Fixture();
 
         private Mock<INoSQLTableStorage<SubscriberEntity>> _storageMock;
+        private Mock<INoSQLTableStorage<DeactivatedSuscriberEntity>> _deactivateSubsriberStorageMock;
         private SubscriberData _subscriberData;
         private ISubscriberRepository _repository;
 
@@ -49,6 +50,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             _storageMock.Setup(x => x.GetDataAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(subscriberEntity));
             _storageMock.Setup(x => x.DeleteIfExistAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(true));
 
+            _deactivateSubsriberStorageMock = new Mock<INoSQLTableStorage<DeactivatedSuscriberEntity>>();
+
+            _repository = new SubscriberRepository(_storageMock.Object, _deactivateSubsriberStorageMock.Object);
         }
 
         [Test]
