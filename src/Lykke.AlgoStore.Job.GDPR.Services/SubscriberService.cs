@@ -130,10 +130,10 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         {
             bool isSuccessfulDeactivation;
 
+            ValidateClientId(clientId);
+
             try
             {
-                ValidateClientId(clientId);
-
                 // probably set deletion status here? 
 
                 // first get all comments made by the user and unlink his id from author field
