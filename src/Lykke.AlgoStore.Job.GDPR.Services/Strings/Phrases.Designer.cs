@@ -22,7 +22,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services.Strings {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Phrases {
+    public class Phrases {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services.Strings {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lykke.AlgoStore.Job.GDPR.Services.Strings.Phrases", typeof(Phrases).Assembly);
@@ -51,7 +51,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services.Strings {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,18 +63,27 @@ namespace Lykke.AlgoStore.Job.GDPR.Services.Strings {
         /// <summary>
         ///   Looks up a localized string similar to ClientId cannot be empty.
         /// </summary>
-        internal static string ClientIdEmpty {
+        public static string ClientIdEmpty {
             get {
                 return ResourceManager.GetString("ClientIdEmpty", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} consent has already been given for clientId {1}.
+        ///   Looks up a localized string similar to Cookie consent has already been given.
         /// </summary>
-        internal static string ConsentAlreadyGiven {
+        public static string CookieConsentAlreadyGiven {
             get {
-                return ResourceManager.GetString("ConsentAlreadyGiven", resourceCulture);
+                return ResourceManager.GetString("CookieConsentAlreadyGiven", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GDPR consent has already been given.
+        /// </summary>
+        public static string GdprConsentAlreadyGiven {
+            get {
+                return ResourceManager.GetString("GdprConsentAlreadyGiven", resourceCulture);
             }
         }
     }
