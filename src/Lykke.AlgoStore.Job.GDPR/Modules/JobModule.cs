@@ -21,6 +21,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
     public class JobModule : Module
     {
         private readonly IReloadingManager<AppSettings> _settingsManager;
+        // ReSharper disable once CollectionNeverUpdated.Local
         private readonly IServiceCollection _services;
 
         public JobModule(IReloadingManager<AppSettings> settingsManager)
@@ -35,6 +36,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
             RegisterDeactivationProcess(builder);
             RegisterLocalServices(builder);
             RegisterExternalServices(builder);
+
             builder.Populate(_services);
         }
 
@@ -56,7 +58,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
                 _settingsManager.ConnectionString(x => x.AlgoStoreGdprJob.Db.DataStorageConnectionString);
 
             builder.RegisterInstance(AzureTableStorage<AlgoCommentEntity>.Create(reloadingDbManager,
-                AlgoCommentsRepository.TableName, logFactory.CreateLog(this)));
+                AlgoCommentsRepository.TableName, logFactory));
             builder.RegisterType<AlgoCommentsRepository>().As<IAlgoCommentsRepository>();
 
             builder.Register(x =>
@@ -72,8 +74,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
                 .As<IAlgoClientInstanceRepository>()
                 .SingleInstance();
 
-            builder.RegisterInstance(AzureTableStorage<AlgoEntity>.Create(reloadingDbManager, AlgoRepository.TableName,
-                logFactory.CreateLog(this)));
+            builder.RegisterInstance(
+                AzureTableStorage<AlgoEntity>.Create(reloadingDbManager, AlgoRepository.TableName, logFactory));
 
             builder.RegisterType<AlgoRepository>().As<IAlgoReadOnlyRepository>().As<IAlgoRepository>();
         }
@@ -91,12 +93,11 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
             builder.RegisterAlgoInstanceStoppingClient(_settingsManager.CurrentValue.AlgoStoreStoppingClient.ServiceUrl,
                 logFactory.CreateLog(this));
 
-            //builder.RegisterSecurityClient(_settingsManager.CurrentValue.AlgoStoreSecurityServiceClient.ServiceUrl, logFactory.CreateLog(this));
-
-            builder.RegisterInstance(new SecurityClient(
-                    _settingsManager.CurrentValue.AlgoStoreSecurityServiceClient.ServiceUrl,
-                    logFactory.CreateLog(this)))
-                .As<ISecurityClient>().SingleInstance();
+            builder.RegisterType<SecurityClient>()
+                .WithParameter("serviceUrl", _settingsManager.CurrentValue.AlgoStoreSecurityServiceClient.ServiceUrl)
+                .WithParameter("log", logFactory.CreateLog(this))
+                .As<ISecurityClient>()
+                .SingleInstance();
         }
 
         private void RegisterLocalServices(ContainerBuilder builder)
