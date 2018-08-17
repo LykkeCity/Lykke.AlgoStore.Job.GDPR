@@ -70,11 +70,20 @@ namespace Lykke.AlgoStore.Job.GDPR.Services.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} consent has already been given for clientId {1}.
+        ///   Looks up a localized string similar to Cookie consent has already been given.
         /// </summary>
-        public static string ConsentAlreadyGiven {
+        public static string CookieConsentAlreadyGiven {
             get {
-                return ResourceManager.GetString("ConsentAlreadyGiven", resourceCulture);
+                return ResourceManager.GetString("CookieConsentAlreadyGiven", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GDPR consent has already been given.
+        /// </summary>
+        public static string GdprConsentAlreadyGiven {
+            get {
+                return ResourceManager.GetString("GdprConsentAlreadyGiven", resourceCulture);
             }
         }
     }

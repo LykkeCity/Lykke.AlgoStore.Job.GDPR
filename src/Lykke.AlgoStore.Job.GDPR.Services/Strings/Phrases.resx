@@ -117,10 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ConsentAlreadyGiven" xml:space="preserve">
-    <value>{0} consent has already been given for clientId {1}</value>
+  <data name="GdprConsentAlreadyGiven" xml:space="preserve">
+    <value>GDPR consent has already been given</value>
   </data>
   <data name="ClientIdEmpty" xml:space="preserve">
     <value>ClientId cannot be empty</value>
+  </data>
+  <data name="CookieConsentAlreadyGiven" xml:space="preserve">
+    <value>Cookie consent has already been given</value>
   </data>
 </root>

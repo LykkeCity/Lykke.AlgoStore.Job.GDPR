@@ -121,7 +121,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
                 _algoRepositoryMock.Object);
 
-            Assert.ThrowsAsync<ValidationException>(() => _service.SetCookieConsentAsync(ClientId));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetCookieConsentAsync(ClientId));
+
+            Assert.That(ex.Message, Is.EqualTo(Phrases.CookieConsentAlreadyGiven));
         }
 
         [Test]
@@ -155,7 +157,9 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
                 _algoRepositoryMock.Object);
 
-            Assert.ThrowsAsync<ValidationException>(() => _service.SetGdprConsentAsync(ClientId));
+            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetGdprConsentAsync(ClientId));
+
+            Assert.That(ex.Message, Is.EqualTo(Phrases.GdprConsentAlreadyGiven));
         }
 
         [Test]

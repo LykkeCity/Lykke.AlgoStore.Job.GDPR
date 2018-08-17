@@ -82,7 +82,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
             if (entity.CookieConsent)
             {
-                throw new ValidationException(string.Format(Phrases.ConsentAlreadyGiven, "Cookie", clientId));
+                throw new ValidationException(Phrases.CookieConsentAlreadyGiven);
             }
 
             entity.CookieConsent = true;
@@ -106,7 +106,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
             if (entity.GdprConsent)
             {
-                throw new ValidationException(string.Format(Phrases.ConsentAlreadyGiven, "GDPR", clientId));
+                throw new ValidationException(Phrases.GdprConsentAlreadyGiven);
             }
 
             entity.GdprConsent = true;
