@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Lykke.AlgoStore.CSharp.AlgoTemplate.Models" Version="1.0.77" />
     <PackageReference Include="Lykke.AlgoStore.Job.Stopping.Client" Version="1.0.6" />
-    <PackageReference Include="Lykke.AlgoStore.Service.Security.Client" Version="1.0.9" />
+    <PackageReference Include="Lykke.AlgoStore.Service.Security.Client" Version="1.0.10" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lykke.AlgoStore.Job.GDPR.Core\Lykke.AlgoStore.Job.GDPR.Core.csproj" />
