@@ -49,7 +49,6 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             _storageMock.Setup(x => x.GetDataAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(subscriberEntity));
             _storageMock.Setup(x => x.DeleteIfExistAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(true));
 
-            _repository = new SubscriberRepository(_storageMock.Object);
         }
 
         [Test]

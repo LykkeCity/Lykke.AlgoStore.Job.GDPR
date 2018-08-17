@@ -10,14 +10,18 @@ namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories
     {
         public static readonly string TableName = "AlgoStoreSubscribers";
         private static readonly string PartitionKey = "Subscriber";
+        private static readonly string PartitionKeyDeactivate = "DeactivateSubscriber";
 
+        private readonly INoSQLTableStorage<DeactivatedSuscriberEntity> _deactivatedSuscribersTable;
         private readonly INoSQLTableStorage<SubscriberEntity> _table;
 
         public static string GenerateRowKey(string key) => key;
 
-        public SubscriberRepository(INoSQLTableStorage<SubscriberEntity> table)
+        public SubscriberRepository(INoSQLTableStorage<SubscriberEntity> table,
+            INoSQLTableStorage<DeactivatedSuscriberEntity> deactivatedSuscribersTable)
         {
             _table = table;
+            _deactivatedSuscribersTable = deactivatedSuscribersTable;
         }
 
         public async Task SaveAsync(SubscriberData data)
@@ -36,6 +40,18 @@ namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories
             return AutoMapper.Mapper.Map<SubscriberData>(result);
         }
 
+        public async Task<DeactivateSubscriberData> GetSuscribersToDeactivateAsync()
+        {
+            var result = await _deactivatedSuscribersTable.GetDataAsync(PartitionKeyDeactivate);
+
+            return AutoMapper.Mapper.Map<DeactivateSubscriberData>(result);
+        }
+
+        public async Task DeleteDeactivatedSubscriberAsync(string clientId)
+        {
+            await _deactivatedSuscribersTable.DeleteIfExistAsync(PartitionKeyDeactivate, clientId);
+        }
+
         public async Task UpdateAsync(SubscriberData data)
         {
             var entity = AutoMapper.Mapper.Map<SubscriberEntity>(data);
@@ -48,6 +64,12 @@ namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories
         public async Task DeleteAsync(string clientId)
         {
             await _table.DeleteIfExistAsync(PartitionKey, clientId);
+            await _deactivatedSuscribersTable.InsertOrMergeAsync(new DeactivatedSuscriberEntity()
+            {
+                PartitionKey = PartitionKeyDeactivate,
+                RowKey = clientId,
+                ClientId = clientId
+            });
         }
     }
 }

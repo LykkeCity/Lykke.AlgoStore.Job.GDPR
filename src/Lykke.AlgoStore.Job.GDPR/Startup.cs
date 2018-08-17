@@ -1,12 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Common.Log;
 using JetBrains.Annotations;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
-using Lykke.AlgoStore.Job.GDPR.Core.Services;
 using Lykke.AlgoStore.Job.GDPR.Modules;
 using Lykke.AlgoStore.Job.GDPR.Settings;
 using Lykke.Common;
@@ -21,6 +18,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
+using System;
+using System.Threading.Tasks;
 
 namespace Lykke.AlgoStore.Job.GDPR
 {
@@ -97,16 +96,17 @@ namespace Lykke.AlgoStore.Job.GDPR
                     appSettings.SlackNotifications.AzureQueue.QueueName);
 
                 var builder = new ContainerBuilder();
-                builder.Populate(services);
 
-                builder.RegisterModule(new JobModule(appSettings.AlgoStoreGdprJob, settingsManager.Nested(x => x.AlgoStoreGdprJob)));
+                builder.RegisterModule(new JobModule(settingsManager));
+
+                builder.Populate(services);
 
                 ApplicationContainer = builder.Build();
 
                 var logFactory = ApplicationContainer.Resolve<ILogFactory>();
                 _log = logFactory.CreateLog(this);
-                _healthNotifier = ApplicationContainer.Resolve<IHealthNotifier>();
-
+               _healthNotifier = ApplicationContainer.Resolve<IHealthNotifier>();
+               
                 return new AutofacServiceProvider(ApplicationContainer);
             }
             catch (Exception ex)
@@ -127,7 +127,7 @@ namespace Lykke.AlgoStore.Job.GDPR
                     app.UseDeveloperExceptionPage();
 
                 app.UseLykkeForwardedHeaders();
-                app.UseLykkeMiddleware(ex => new ErrorResponse {ErrorMessage = "Technical problem"});
+                app.UseLykkeMiddleware(ex => new ErrorResponse { ErrorMessage = "Technical problem" });
 
                 app.UseMvc();
                 app.UseSwagger(c =>
@@ -142,7 +142,6 @@ namespace Lykke.AlgoStore.Job.GDPR
                 app.UseStaticFiles();
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().GetAwaiter().GetResult());
-                appLifetime.ApplicationStopping.Register(() => StopApplication().GetAwaiter().GetResult());
                 appLifetime.ApplicationStopped.Register(CleanUp);
             }
             catch (Exception ex)
@@ -156,10 +155,9 @@ namespace Lykke.AlgoStore.Job.GDPR
         {
             try
             {
-                // NOTE: Job not yet receive and process IsAlive requests here
-
-                await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
                 _healthNotifier.Notify("Started", Program.EnvInfo);
+
+                ApplicationContainer.Resolve<DeactivatedSubscribersMonitor>().StartAsync();
 
 #if !DEBUG
                 await Configuration.RegisterInMonitoringServiceAsync(_monitoringServiceUrl, _healthNotifier);
@@ -168,21 +166,6 @@ namespace Lykke.AlgoStore.Job.GDPR
             catch (Exception ex)
             {
                 _log.Critical(ex);
-                throw;
-            }
-        }
-
-        private async Task StopApplication()
-        {
-            try
-            {
-                // NOTE: Job still can receive and process IsAlive requests here, so take care about it if you add logic here.
-
-                await ApplicationContainer.Resolve<IShutdownManager>().StopAsync();
-            }
-            catch (Exception ex)
-            {
-                _log?.Critical(ex);
                 throw;
             }
         }

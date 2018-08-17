@@ -1,8 +1,9 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Lykke.AlgoStore.Job.GDPR.Core.Services;
-using Lykke.AlgoStore.Job.GDPR.Services;
-using Lykke.AlgoStore.Job.GDPR.Settings.JobSettings;
+using Lykke.AlgoStore.Job.GDPR.AzureRepositories;
+using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
+using Lykke.AlgoStore.Job.GDPR.Settings;
+using Lykke.Common.Log;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,40 +11,43 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
 {
     public class JobModule : Module
     {
-        private readonly GdprSettings _settings;
-        private readonly IReloadingManager<GdprSettings> _settingsManager;
-        // NOTE: you can remove it if you don't need to use IServiceCollection extensions to register service specific dependencies
+        private readonly IReloadingManager<AppSettings> _settingsManager;
         private readonly IServiceCollection _services;
 
-        public JobModule(GdprSettings settings, IReloadingManager<GdprSettings> settingsManager)
+        public JobModule(IReloadingManager<AppSettings> settingsManager)
         {
-            _settings = settings;
             _settingsManager = settingsManager;
-
             _services = new ServiceCollection();
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            // NOTE: Do not register entire settings in container, pass necessary settings to services which requires them
-            // ex:
-            // builder.RegisterType<QuotesPublisher>()
-            //  .As<IQuotesPublisher>()
-            //  .WithParameter(TypedParameter.From(_settings.Rabbit.ConnectionString))
 
-            builder.RegisterType<HealthService>()
-                .As<IHealthService>()
-                .SingleInstance();
+            RegisterRepositories(builder);
 
-            builder.RegisterType<StartupManager>()
-                .As<IStartupManager>();
-
-            builder.RegisterType<ShutdownManager>()
-                .As<IShutdownManager>();
-
-            // TODO: Add your dependencies here
+            RegisterDeactivationProcess(builder);
 
             builder.Populate(_services);
+        }
+
+        private void RegisterRepositories(ContainerBuilder builder)
+        {
+            builder.Register(x =>
+            {
+                var log = x.Resolve<ILogFactory>();
+                var repository = AzureRepoFactories.CreateSubscriberRepository(
+                    _settingsManager.Nested(r => r.AlgoStoreGdprJob.Db.DataStorageConnectionString), log);
+
+                return repository;
+            })
+            .As<ISubscriberRepository>()
+            .SingleInstance();
+        }
+
+        private void RegisterDeactivationProcess(ContainerBuilder builder)
+        {
+            builder.RegisterInstance(_settingsManager.CurrentValue.AlgoStoreGdprJob.DeactivatedSubscribersMonitor);
+            builder.RegisterType<DeactivatedSubscribersMonitor>().SingleInstance();
         }
     }
 }

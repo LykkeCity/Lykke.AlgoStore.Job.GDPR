@@ -1,13 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoMapper;
 using Common.Log;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
 using Lykke.AlgoStore.Job.GDPR.Controllers;
-using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Services;
-using Lykke.AlgoStore.Job.GDPR.Core.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -53,7 +49,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             _httpContextMock.Setup(x => x.Request.Headers.Add("TEST", It.IsAny<string>()));
 
             _controller = new SubscribersController(_usersServiceMock.Object, _logMock.Object)
-                {ControllerContext = new ControllerContext {HttpContext = _httpContextMock.Object}};
+            { ControllerContext = new ControllerContext { HttpContext = _httpContextMock.Object } };
         }
 
         [Test]

@@ -46,6 +46,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             _logFactory = new Mock<ILogFactory>();
 
             _repository = new SubscriberRepository(AzureTableStorage<SubscriberEntity>.Create(
+                SettingsMock.GetDataStorageConnectionString(), SubscriberRepository.TableName, _logFactory.Object), AzureTableStorage<DeactivatedSuscriberEntity>.Create(
                 SettingsMock.GetDataStorageConnectionString(), SubscriberRepository.TableName, _logFactory.Object));
         }
 
