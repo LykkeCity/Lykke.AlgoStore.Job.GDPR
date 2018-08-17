@@ -1,9 +1,18 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AzureStorage.Tables;
+using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Entities;
+using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Repositories;
 using Lykke.AlgoStore.Job.GDPR.AzureRepositories;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
+using Lykke.AlgoStore.Job.GDPR.Services;
 using Lykke.AlgoStore.Job.GDPR.Settings;
+using Lykke.AlgoStore.Job.Stopping.Client;
+using Lykke.AlgoStore.Service.Security.Client;
 using Lykke.Common.Log;
+using Lykke.Logs;
+using Lykke.Logs.Loggers.LykkeConsole;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,11 +31,10 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-
             RegisterRepositories(builder);
-
             RegisterDeactivationProcess(builder);
-
+            RegisterLocalServices(builder);
+            RegisterExternalServices(builder);
             builder.Populate(_services);
         }
 
@@ -42,12 +50,53 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
             })
             .As<ISubscriberRepository>()
             .SingleInstance();
+
+            var logFactory = LogFactory.Create().AddConsole();
+            var reloadingDbManager = _settingsManager.ConnectionString(x => x.AlgoStoreGdprJob.Db.DataStorageConnectionString);
+
+            builder.RegisterInstance(AzureTableStorage<AlgoCommentEntity>.Create(reloadingDbManager, AlgoCommentsRepository.TableName, logFactory.CreateLog(this)));
+            builder.RegisterType<AlgoCommentsRepository>().As<IAlgoCommentsRepository>();
+
+            builder.Register(x =>
+                {
+                    var log = x.Resolve<ILogFactory>();
+                    var repository = Lykke.AlgoStore.CSharp.AlgoTemplate.Models.AzureRepoFactories.CreateAlgoClientInstanceRepository(
+                        _settingsManager.Nested(r => r.AlgoStoreGdprJob.Db.DataStorageConnectionString), log.CreateLog(this));
+
+                    return repository;
+                })
+                .As<IAlgoClientInstanceRepository>()
+                .SingleInstance();
+
+            builder.RegisterInstance(AzureTableStorage<AlgoEntity>.Create(reloadingDbManager, AlgoRepository.TableName, logFactory.CreateLog(this)));
+
+            builder.RegisterType<AlgoRepository>().As<IAlgoReadOnlyRepository>().As<IAlgoRepository>();
+
         }
 
         private void RegisterDeactivationProcess(ContainerBuilder builder)
         {
             builder.RegisterInstance(_settingsManager.CurrentValue.AlgoStoreGdprJob.DeactivatedSubscribersMonitor);
             builder.RegisterType<DeactivatedSubscribersMonitor>().SingleInstance();
+        }
+
+        private void RegisterExternalServices(ContainerBuilder builder)
+        {
+            var logFactory = LogFactory.Create().AddConsole();
+
+            builder.RegisterAlgoInstanceStoppingClient(_settingsManager.CurrentValue.AlgoStoreStoppingClient.ServiceUrl, logFactory.CreateLog(this));
+
+            //builder.RegisterSecurityClient(_settingsManager.CurrentValue.AlgoStoreSecurityServiceClient.ServiceUrl, logFactory.CreateLog(this));
+
+            builder.RegisterInstance(new SecurityClient(_settingsManager.CurrentValue.AlgoStoreSecurityServiceClient.ServiceUrl, logFactory.CreateLog(this))).As<ISecurityClient>().SingleInstance();
+
+        }
+
+        private void RegisterLocalServices(ContainerBuilder builder)
+        {
+            builder.RegisterType<SubscriberService>()
+                .As<ISubscriberService>()
+                .SingleInstance();
         }
     }
 }
