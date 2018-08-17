@@ -41,11 +41,32 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
         [Test]
         [Explicit("This test will try to initiate REST API client on localhost. Do not remove explicit attribute ever and use this just for local testing :)")]
-        public void HandleCandlesAsync_Test()
+        public void GetLegalConsentsAsync_Test()
         {
             var result = _client.GetLegalConsentsAsync("TEST").Result;
 
             Assert.IsNotNull(result);
+        }
+
+        [Test]
+        [Explicit("This test will try to initiate REST API client on localhost. Do not remove explicit attribute ever and use this just for local testing :)")]
+        public void SetUserGdprConsentAsync_Test()
+        {
+            _client.SetUserGdprConsentAsync("TEST").Wait();
+        }
+
+        [Test]
+        [Explicit("This test will try to initiate REST API client on localhost. Do not remove explicit attribute ever and use this just for local testing :)")]
+        public void SetUserCookieConsentAsync_Test()
+        {
+            _client.SetUserCookieConsentAsync("TEST").Wait();
+        }
+
+        [Test]
+        [Explicit("This test will try to initiate REST API client on localhost. Do not remove explicit attribute ever and use this just for local testing :)")]
+        public void DeactivateUserAccountAsync_Test()
+        {
+            _client.DeactivateUserAccountAsync("TEST").Wait();
         }
     }
 }

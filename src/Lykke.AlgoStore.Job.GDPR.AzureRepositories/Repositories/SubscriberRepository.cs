@@ -1,4 +1,6 @@
-﻿using AzureStorage;
+﻿using System.Collections;
+using System.Collections.Generic;
+using AzureStorage;
 using Lykke.AlgoStore.Job.GDPR.AzureRepositories.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
@@ -40,11 +42,11 @@ namespace Lykke.AlgoStore.Job.GDPR.AzureRepositories.Repositories
             return AutoMapper.Mapper.Map<SubscriberData>(result);
         }
 
-        public async Task<DeactivateSubscriberData> GetSuscribersToDeactivateAsync()
+        public async Task<ICollection<DeactivateSubscriberData>> GetSuscribersToDeactivateAsync()
         {
             var result = await _deactivatedSuscribersTable.GetDataAsync(PartitionKeyDeactivate);
 
-            return AutoMapper.Mapper.Map<DeactivateSubscriberData>(result);
+            return AutoMapper.Mapper.Map<ICollection<DeactivateSubscriberData>>(result);
         }
 
         public async Task DeleteDeactivatedSubscriberAsync(string clientId)

@@ -4,6 +4,7 @@ using Common.Log;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
 using Lykke.AlgoStore.Job.GDPR.Controllers;
 using Lykke.AlgoStore.Job.GDPR.Core.Services;
+using Lykke.Common.Log;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -16,7 +17,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
     {
         private readonly Fixture _fixture = new Fixture();
         private Mock<ISubscriberService> _usersServiceMock;
-        private Mock<ILog> _logMock;
+        private Mock<ILogFactory> _logFactoryMock;
         private SubscribersController _controller;
         private Mock<HttpContext> _httpContextMock;
 
@@ -35,7 +36,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             Mapper.AssertConfigurationIsValid();
 
-            _logMock = new Mock<ILog>();
+            _logFactoryMock = new Mock<ILogFactory>();
 
             //REMARK: Cannot mock extension methods, but it will work without mocking those :)
             //_logMock.Setup(x => x.LogElapsedTimeAsync(It.IsAny<string>(), It.IsAny<Func<Task>>()))
@@ -48,7 +49,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             _httpContextMock = new Mock<HttpContext>();
             _httpContextMock.Setup(x => x.Request.Headers.Add("TEST", It.IsAny<string>()));
 
-            _controller = new SubscribersController(_usersServiceMock.Object, _logMock.Object)
+            _controller = new SubscribersController(_usersServiceMock.Object, _logFactoryMock.Object)
             { ControllerContext = new ControllerContext { HttpContext = _httpContextMock.Object } };
         }
 

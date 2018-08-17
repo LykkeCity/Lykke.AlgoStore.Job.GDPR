@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
+using Lykke.Common.Log;
 
 namespace Lykke.AlgoStore.Job.GDPR.Controllers
 {
@@ -17,10 +18,10 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
         private readonly ISubscriberService _usersService;
         private readonly ILog _log;
 
-        public SubscribersController(ISubscriberService usersService, ILog log)
+        public SubscribersController(ISubscriberService usersService, ILogFactory logFactory)
         {
             _usersService = usersService;
-            _log = log;
+            _log = logFactory.CreateLog(this);
         }
 
         [HttpGet("legalConsents")]
@@ -34,7 +35,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
 
         [HttpPost("gdprConsent")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> SetUserGdprConsent([FromBody] string clientId)
+        public async Task<IActionResult> SetUserGdprConsent(string clientId)
         {
             await _log.LogElapsedTimeAsync(null, async () => await _usersService.SetGdprConsentAsync(clientId));
 
@@ -43,7 +44,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
 
         [HttpPost("cookieConsent")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> SetUserCookieConsent([FromBody] string clientId)
+        public async Task<IActionResult> SetUserCookieConsent(string clientId)
         {
             await _log.LogElapsedTimeAsync(clientId, async () => await _usersService.SetCookieConsentAsync(clientId));
 
@@ -52,7 +53,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
 
         [HttpPost("deactivateAccount")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> DeactivateUserAccount([FromBody] string clientId)
+        public async Task<IActionResult> DeactivateUserAccount(string clientId)
         {
             await _log.LogElapsedTimeAsync(clientId, async () => await _usersService.RemoveUserConsents(clientId));
 

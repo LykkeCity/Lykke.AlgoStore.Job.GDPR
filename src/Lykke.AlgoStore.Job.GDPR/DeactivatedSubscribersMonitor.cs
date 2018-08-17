@@ -4,6 +4,7 @@ using Lykke.AlgoStore.Job.GDPR.Settings.JobSettings;
 using Lykke.Common.Log;
 using System;
 using System.Threading.Tasks;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
 
 namespace Lykke.AlgoStore.Job.GDPR
 {
@@ -12,13 +13,16 @@ namespace Lykke.AlgoStore.Job.GDPR
         private readonly DeactivatedSubscribersMonitorSettings _settings;
         private readonly ILog _log;
         private readonly ISubscriberRepository _subscriberRepository;
+        private readonly ISubscriberService _subscriberService;
 
         public DeactivatedSubscribersMonitor(DeactivatedSubscribersMonitorSettings settings,
-            ILogFactory logFactory, ISubscriberRepository subscriberRepository)
+            ILogFactory logFactory, ISubscriberRepository subscriberRepository,
+            ISubscriberService subscriberService)
         {
             _settings = settings;
             _log = logFactory.CreateLog(this);
             _subscriberRepository = subscriberRepository;
+            _subscriberService = subscriberService;
         }
 
         public async Task StartAsync()
@@ -30,10 +34,12 @@ namespace Lykke.AlgoStore.Job.GDPR
         {
             while (true)
             {
-                var deactivatedSubscribers = _subscriberRepository.GetSuscribersToDeactivateAsync();
+                var deactivatedSubscribers = await _subscriberRepository.GetSuscribersToDeactivateAsync();
 
-                //await TryDeleteSubscribersInformation(deactivatedSubscribers);
-
+                foreach (var deactivatedSubscriber in deactivatedSubscribers)
+                {
+                    await _subscriberService.DeactivateAccountAsync(deactivatedSubscriber.ClientId);
+                }
                 await Task.Delay(TimeSpan.FromSeconds(_settings.CheckIntervalInSeconds));
             }
         }
