@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using AutoMapper;
+﻿using AutoMapper;
 using Common.Log;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
 using Lykke.AlgoStore.Job.GDPR.Controllers;
@@ -15,7 +14,6 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
     [TestFixture]
     public class GdprControllerTests
     {
-        private readonly Fixture _fixture = new Fixture();
         private Mock<ISubscriberService> _usersServiceMock;
         private Mock<ILogFactory> _logFactoryMock;
         private SubscribersController _controller;
@@ -40,12 +38,6 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             var logMock = new Mock<ILog>();
 
             _logFactoryMock.Setup(x => x.CreateLog(It.IsAny<object>())).Returns(logMock.Object);
-
-            //REMARK: Cannot mock extension methods, but it will work without mocking those :)
-            //_logMock.Setup(x => x.LogElapsedTimeAsync(It.IsAny<string>(), It.IsAny<Func<Task>>()))
-            //    .Returns(Task.CompletedTask);
-            //_logMock.Setup(x => x.LogElapsedTimeAsync(It.IsAny<string>(), It.IsAny<Func<Task<UserData>>>()))
-            //    .Returns(Task.FromResult(_fixture.Build<UserData>().Create()));
 
             _usersServiceMock = new Mock<ISubscriberService>();
 

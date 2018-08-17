@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using AutoMapper;
+﻿using AutoMapper;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
 using Lykke.AlgoStore.Job.GDPR.Client;
 using NUnit.Framework;
@@ -9,7 +8,6 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
     [TestFixture]
     public class GdprClientTests
     {
-        private readonly Fixture _fixture = new Fixture();
         private IGdprClient _client;
 
         [SetUp]
