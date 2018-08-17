@@ -17,7 +17,7 @@ namespace Lykke.AlgoStore.Job.GDPR
             ILogFactory logFactory, ISubscriberRepository subscriberRepository)
         {
             _settings = settings;
-            _log = logFactory.CreateLog(this); ;
+            _log = logFactory.CreateLog(this);
             _subscriberRepository = subscriberRepository;
         }
 

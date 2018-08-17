@@ -15,6 +15,7 @@
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\client\Lykke.AlgoStore.Job.GDPR.Client\Lykke.AlgoStore.Job.GDPR.Client.csproj" />
     <ProjectReference Include="..\..\src\Lykke.AlgoStore.Job.GDPR.Services\Lykke.AlgoStore.Job.GDPR.Services.csproj" />
     <ProjectReference Include="..\..\src\Lykke.AlgoStore.Job.GDPR\Lykke.AlgoStore.Job.GDPR.csproj" />
   </ItemGroup>

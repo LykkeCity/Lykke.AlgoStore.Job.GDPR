@@ -2,6 +2,8 @@
 using Autofac.Extensions.DependencyInjection;
 using Lykke.AlgoStore.Job.GDPR.AzureRepositories;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
+using Lykke.AlgoStore.Job.GDPR.Core.Services;
+using Lykke.AlgoStore.Job.GDPR.Services;
 using Lykke.AlgoStore.Job.GDPR.Settings;
 using Lykke.Common.Log;
 using Lykke.SettingsReader;
@@ -22,12 +24,18 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
-
             RegisterRepositories(builder);
+
+            RegisterServices(builder);
 
             RegisterDeactivationProcess(builder);
 
             builder.Populate(_services);
+        }
+
+        private void RegisterServices(ContainerBuilder builder)
+        {
+            builder.RegisterType<SubscriberService>().As<ISubscriberService>().SingleInstance();
         }
 
         private void RegisterRepositories(ContainerBuilder builder)
