@@ -11,14 +11,14 @@ using Lykke.Common.Log;
 namespace Lykke.AlgoStore.Job.GDPR.Controllers
 {
     [Route("api/v1/subscribers")]
-    public class SubscribersController: Controller
+    public class SubscribersController : Controller
     {
-        private readonly ISubscriberService _usersService;
+        private readonly ISubscriberService _subscriberService;
         private readonly ILog _log;
 
-        public SubscribersController(ISubscriberService usersService, ILogFactory logFactory)
+        public SubscribersController(ISubscriberService subscriberService, ILogFactory logFactory)
         {
-            _usersService = usersService;
+            _subscriberService = subscriberService;
             _log = logFactory.CreateLog(this);
         }
 
@@ -26,7 +26,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
         [ProducesResponseType(typeof(SubscriberModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetLegalConsents(string clientId)
         {
-            var result = await _log.LogElapsedTimeAsync(clientId, async () => await _usersService.GetByIdAsync(clientId));
+            var result = await _log.LogElapsedTimeAsync(clientId, async () => await _subscriberService.GetByIdAsync(clientId));
 
             return Ok(Mapper.Map<SubscriberModel>(result));
         }
@@ -35,7 +35,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> SetUserGdprConsent(string clientId)
         {
-            await _log.LogElapsedTimeAsync(null, async () => await _usersService.SetGdprConsentAsync(clientId));
+            await _log.LogElapsedTimeAsync(null, async () => await _subscriberService.SetGdprConsentAsync(clientId));
 
             return NoContent();
         }
@@ -44,7 +44,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> SetUserCookieConsent(string clientId)
         {
-            await _log.LogElapsedTimeAsync(clientId, async () => await _usersService.SetCookieConsentAsync(clientId));
+            await _log.LogElapsedTimeAsync(clientId, async () => await _subscriberService.SetCookieConsentAsync(clientId));
 
             return NoContent();
         }
@@ -53,7 +53,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> DeactivateUserAccount(string clientId)
         {
-            await _log.LogElapsedTimeAsync(clientId, async () => await _usersService.RemoveUserConsents(clientId));
+            await _log.LogElapsedTimeAsync(clientId, async () => await _subscriberService.RemoveUserConsents(clientId));
 
             return NoContent();
         }
