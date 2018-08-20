@@ -32,6 +32,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         private Mock<IAlgoClientInstanceRepository> _clientInstanceRepositoryMock;
         private Mock<IAlgoRepository> _algoRepositoryMock;
         private Mock<ILogFactory> _logFactoryMock;
+        private Mock<IPublicAlgosRepository> _publicAlgosRepositoryMock;
 
         [SetUp]
         public void SetUp()
@@ -122,7 +123,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             _service = new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
-                _algoRepositoryMock.Object, _logFactoryMock.Object);
+                _algoRepositoryMock.Object, _logFactoryMock.Object, _publicAlgosRepositoryMock.Object);
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetCookieConsentAsync(ClientId));
 
@@ -158,7 +159,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             _service = new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
-                _algoRepositoryMock.Object, _logFactoryMock.Object);
+                _algoRepositoryMock.Object, _logFactoryMock.Object, _publicAlgosRepositoryMock.Object);
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetGdprConsentAsync(ClientId));
 
@@ -205,9 +206,11 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             _logFactoryMock.Setup(x => x.CreateLog(It.IsAny<object>())).Returns(logMock.Object);
 
+            _publicAlgosRepositoryMock = new Mock<IPublicAlgosRepository>();
+
             return new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
-                _algoRepositoryMock.Object, _logFactoryMock.Object);
+                _algoRepositoryMock.Object, _logFactoryMock.Object, _publicAlgosRepositoryMock.Object);
         }
     }
 }
