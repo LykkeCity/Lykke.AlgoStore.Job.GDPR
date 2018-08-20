@@ -7,7 +7,6 @@ using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
 using Lykke.AlgoStore.Job.GDPR.Modules;
 using Lykke.AlgoStore.Job.GDPR.Settings;
 using Lykke.Common;
-using Lykke.Common.Api.Contract.Responses;
 using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.Common.Log;
@@ -20,6 +19,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Threading.Tasks;
+using Lykke.Sdk;
+using GlobalErrorHandlerMiddleware = Lykke.AlgoStore.Job.GDPR.Infrastructure.GlobalErrorHandlerMiddleware;
 
 namespace Lykke.AlgoStore.Job.GDPR
 {
@@ -127,7 +128,14 @@ namespace Lykke.AlgoStore.Job.GDPR
                     app.UseDeveloperExceptionPage();
 
                 app.UseLykkeForwardedHeaders();
-                app.UseLykkeMiddleware(ex => new ErrorResponse { ErrorMessage = "Technical problem" });
+                
+                app.UseLykkeConfiguration(opt =>
+                {
+                    opt.WithMiddleware = appBuilder =>
+                    {
+                        appBuilder.UseMiddleware<GlobalErrorHandlerMiddleware>();
+                    };
+                });
 
                 app.UseMvc();
                 app.UseSwagger(c =>

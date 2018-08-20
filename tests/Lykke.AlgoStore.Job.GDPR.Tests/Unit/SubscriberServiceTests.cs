@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoMapper;
+using Common.Log;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Mapper;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Repositories;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
@@ -12,6 +13,7 @@ using Lykke.AlgoStore.Job.GDPR.Services;
 using Lykke.AlgoStore.Job.GDPR.Services.Strings;
 using Lykke.AlgoStore.Job.Stopping.Client;
 using Lykke.AlgoStore.Service.Security.Client;
+using Lykke.Common.Log;
 using Moq;
 using NUnit.Framework;
 
@@ -29,6 +31,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         private Mock<IAlgoInstanceStoppingClient> _instanceStoppingClientMock;
         private Mock<IAlgoClientInstanceRepository> _clientInstanceRepositoryMock;
         private Mock<IAlgoRepository> _algoRepositoryMock;
+        private Mock<ILogFactory> _logFactoryMock;
 
         [SetUp]
         public void SetUp()
@@ -119,7 +122,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             _service = new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
-                _algoRepositoryMock.Object);
+                _algoRepositoryMock.Object, _logFactoryMock.Object);
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetCookieConsentAsync(ClientId));
 
@@ -155,7 +158,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             _service = new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
-                _algoRepositoryMock.Object);
+                _algoRepositoryMock.Object, _logFactoryMock.Object);
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetGdprConsentAsync(ClientId));
 
@@ -196,10 +199,15 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
             _instanceStoppingClientMock = new Mock<IAlgoInstanceStoppingClient>();
             _clientInstanceRepositoryMock = new Mock<IAlgoClientInstanceRepository>();
             _algoRepositoryMock = new Mock<IAlgoRepository>();
+            _logFactoryMock = new Mock<ILogFactory>();
+
+            var logMock = new Mock<ILog>();
+
+            _logFactoryMock.Setup(x => x.CreateLog(It.IsAny<object>())).Returns(logMock.Object);
 
             return new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
-                _algoRepositoryMock.Object);
+                _algoRepositoryMock.Object, _logFactoryMock.Object);
         }
     }
 }

@@ -10,7 +10,6 @@ using Lykke.Common.Log;
 
 namespace Lykke.AlgoStore.Job.GDPR.Controllers
 {
-    //[Authorize]
     [Route("api/v1/subscribers")]
     public class SubscribersController: Controller
     {

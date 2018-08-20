@@ -132,6 +132,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         {
             bool isSuccessfulDeactivation;
 
+            ValidateClientId(clientId);
+
             try
             {
                 ValidateClientId(clientId);
