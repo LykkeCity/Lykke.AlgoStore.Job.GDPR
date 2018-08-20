@@ -79,5 +79,13 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             Assert.IsInstanceOf<NoContentResult>(result);
         }
+
+        [Test]
+        public void SeedConsent_WillReturnCorrectResult_Test()
+        {
+            var result = _controller.SeedConsent(It.IsAny<string>()).Result;
+
+            Assert.IsInstanceOf<NoContentResult>(result);
+        }
     }
 }
