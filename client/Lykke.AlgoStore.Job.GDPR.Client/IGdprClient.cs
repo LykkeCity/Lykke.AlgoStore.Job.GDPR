@@ -22,5 +22,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Client
 
         [Post("/api/v1/subscribers/deactivateAccount")]
         Task DeactivateUserAccountAsync(string clientId);
+
+        [Post("/api/v1/subscribers/seedConsent")]
+        Task SeedConsentAsync(string clientId);
     }
 }

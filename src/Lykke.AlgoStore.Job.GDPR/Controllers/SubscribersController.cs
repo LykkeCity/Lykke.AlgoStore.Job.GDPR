@@ -57,5 +57,14 @@ namespace Lykke.AlgoStore.Job.GDPR.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("seedConsent")]
+        [ProducesResponseType(typeof(SubscriberModel), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SeedConsent(string clientId)
+        {
+            await _log.LogElapsedTimeAsync(clientId, async () => await _usersService.SeedAsync(clientId));
+
+            return NoContent();
+        }
     }
 }
