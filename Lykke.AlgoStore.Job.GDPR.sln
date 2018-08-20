@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.AlgoStore.Job.GDPR.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. Client", "4. Client", "{6F6505E6-05B9-427F-B7EA-28B8AD932E2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.AlgoStore.Job.GDPR.Client", "client\Lykke.AlgoStore.Job.GDPR.Client\Lykke.AlgoStore.Job.GDPR.Client.csproj", "{84CF27BF-12F6-4C6E-A479-DCAB7F6084F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.AlgoStore.Job.GDPR.Client", "client\Lykke.AlgoStore.Job.GDPR.Client\Lykke.AlgoStore.Job.GDPR.Client.csproj", "{84CF27BF-12F6-4C6E-A479-DCAB7F6084F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

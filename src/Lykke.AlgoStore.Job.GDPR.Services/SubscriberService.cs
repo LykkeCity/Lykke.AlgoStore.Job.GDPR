@@ -1,4 +1,5 @@
-﻿using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Models;
+﻿using Common.Log;
+using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Models;
 using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Repositories;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Entities;
 using Lykke.AlgoStore.Job.GDPR.Core.Domain.Repositories;
@@ -6,48 +7,49 @@ using Lykke.AlgoStore.Job.GDPR.Core.Services;
 using Lykke.AlgoStore.Job.GDPR.Services.Strings;
 using Lykke.AlgoStore.Job.Stopping.Client;
 using Lykke.AlgoStore.Service.Security.Client;
+using Lykke.Common.Log;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Common.Log;
-using Lykke.Common.Log;
 
 namespace Lykke.AlgoStore.Job.GDPR.Services
 {
     public class SubscriberService : ISubscriberService
     {
-        private readonly ISubscriberRepository _usersRepository;
+        private readonly ISubscriberRepository _subscribersRepository;
         private readonly IAlgoClientInstanceRepository _instanceRepository;
         private readonly IAlgoCommentsRepository _commentsRepository;
         private readonly ISecurityClient _securityClient;
         private readonly IAlgoInstanceStoppingClient _algoInstanceStoppingClient;
         private readonly IAlgoRepository _algoRepository;
         private readonly ILog _log;
-
+        private readonly IPublicAlgosRepository _publicAlgosRepository;
 
         public SubscriberService(ISubscriberRepository usersRepository,
             IAlgoCommentsRepository commentsRepository,
             ISecurityClient securityClient,
             IAlgoInstanceStoppingClient algoInstanceStoppingClient,
             IAlgoClientInstanceRepository instanceRepository,
-            IAlgoRepository algoRepository, ILogFactory log)
+            IAlgoRepository algoRepository, ILogFactory log,
+            IPublicAlgosRepository publicAlgosRepository
+            )
         {
-            _usersRepository = usersRepository;
+            _subscribersRepository = usersRepository;
             _commentsRepository = commentsRepository;
             _securityClient = securityClient;
             _algoInstanceStoppingClient = algoInstanceStoppingClient;
             _instanceRepository = instanceRepository;
             _algoRepository = algoRepository;
             _log = log.CreateLog(this);
+            _publicAlgosRepository = publicAlgosRepository;
         }
 
         public async Task SeedAsync(string clientId)
         {
             ValidateClientId(clientId);
 
-            var entity = await _usersRepository.GetByIdAsync(clientId);
+            var entity = await _subscribersRepository.GetByIdAsync(clientId);
 
             if (entity == null)
             {
@@ -60,14 +62,14 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                 };
             }
 
-            await _usersRepository.UpdateAsync(entity);
+            await _subscribersRepository.UpdateAsync(entity);
         }
 
         public async Task<SubscriberData> GetByIdAsync(string clientId)
         {
             ValidateClientId(clientId);
 
-            var result = await _usersRepository.GetByIdAsync(clientId);
+            var result = await _subscribersRepository.GetByIdAsync(clientId);
 
             return result;
         }
@@ -76,7 +78,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         {
             ValidateClientId(clientId);
 
-            var entity = await _usersRepository.GetByIdAsync(clientId);
+            var entity = await _subscribersRepository.GetByIdAsync(clientId);
 
             if (entity == null)
             {
@@ -93,14 +95,14 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
             entity.CookieConsent = true;
 
-            await _usersRepository.UpdateAsync(entity);
+            await _subscribersRepository.UpdateAsync(entity);
         }
 
         public async Task SetGdprConsentAsync(string clientId)
         {
             ValidateClientId(clientId);
 
-            var subscriberData = await _usersRepository.GetByIdAsync(clientId);
+            var subscriberData = await _subscribersRepository.GetByIdAsync(clientId);
 
             if (subscriberData == null)
             {
@@ -117,7 +119,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
             subscriberData.GdprConsent = true;
 
-            await _usersRepository.UpdateAsync(subscriberData);
+            await _subscribersRepository.UpdateAsync(subscriberData);
         }
 
         /// <summary>
@@ -134,9 +136,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
             {
                 ValidateClientId(clientId);
 
-                // probably set deletion status here? 
-
-                // first get all comments made by the user and unlink his id from author field
+                //get all comments made by the user and unlink his id from author field
                 var comments = await _commentsRepository.GetAllAsync();
                 var userComments = comments.FindAll(c => c.Author == clientId);
 
@@ -149,8 +149,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                     }
                 }
 
-                // second get all roles for this user
-
+                //get all roles for this user
                 var user = await _securityClient.GetUserByIdWithRolesAsync(clientId);
                 var roles = user.Roles;
 
@@ -173,6 +172,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                     var result =
                         await _algoInstanceStoppingClient.DeleteAlgoInstanceAsync(instance.InstanceId,
                             instance.AuthToken);
+                    await _instanceRepository.SaveAlgoInstanceWithNewPKAsync(instance);
                 }
 
                 // replace author in algos
@@ -182,9 +182,18 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                 {
                     // update it
                     var algoToSave = AutoMapper.Mapper.Map<IAlgo>(algo);
-                    algoToSave.ClientId = Guid.NewGuid().ToString();
+                    algoToSave.ClientId = "Deactivated";
                     algoToSave.DateModified = DateTime.Now;
                     await _algoRepository.SaveAlgoWithNewPKAsync(algoToSave, algo.ClientId);
+
+                    if (await _publicAlgosRepository.ExistsPublicAlgoAsync(clientId, algoToSave.AlgoId))
+                    {
+                        await _publicAlgosRepository.SavePublicAlgoNewPKAsync(new PublicAlgoData()
+                        {
+                            ClientId = clientId,
+                            AlgoId = algoToSave.AlgoId
+                        });
+                    }
                 }
 
                 isSuccessfulDeactivation = true;
@@ -208,7 +217,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         {
             ValidateClientId(clientId);
 
-            await _usersRepository.DeleteAsync(clientId);
+            await _subscribersRepository.DeleteAsync(clientId);
         }
 
         /// <summary>
@@ -218,7 +227,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         {
             ValidateClientId(clientId);
 
-            await _usersRepository.DeleteDeactivatedSubscriberAsync(clientId);
+            await _subscribersRepository.DeleteDeactivatedSubscriberAsync(clientId);
         }
 
         /// <summary>
@@ -226,7 +235,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         /// </summary>
         public async Task<ICollection<DeactivateSubscriberData>> GetSuscribersToDeactivateAsync()
         {
-            return await _usersRepository.GetSuscribersToDeactivateAsync();
+            return await _subscribersRepository.GetSuscribersToDeactivateAsync();
         }
 
         private void ValidateClientId(string clientId)
