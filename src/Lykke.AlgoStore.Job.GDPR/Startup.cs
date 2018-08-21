@@ -69,23 +69,17 @@ namespace Lykke.AlgoStore.Job.GDPR
                     .AddJsonOptions(options =>
                     {
                         options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                        options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+                        options.SerializerSettings.ContractResolver =
+                            new Newtonsoft.Json.Serialization.DefaultContractResolver();
                     });
 
-                services.AddSwaggerGen(options =>
-                {
-                    options.DefaultLykkeConfiguration(ApiVersion, ApiName);
-                });
+                services.AddSwaggerGen(options => { options.DefaultLykkeConfiguration(ApiVersion, ApiName); });
 
-                var settingsManager = Configuration.LoadSettings<AppSettings>();
+                var settingsManager = Configuration.LoadSettings<AppSettings>(x => (
+                    x.SlackNotifications.AzureQueue.ConnectionString, x.SlackNotifications.AzureQueue.QueueName,
+                    $"{AppEnvironment.Name} {AppEnvironment.Version}"));
 
                 var appSettings = settingsManager.CurrentValue;
-
-                Configuration.CheckDependenciesAsync(
-                    appSettings,
-                    appSettings.SlackNotifications.AzureQueue.ConnectionString,
-                    appSettings.SlackNotifications.AzureQueue.QueueName,
-                    $"{AppEnvironment.Name} {AppEnvironment.Version}");
 
                 if (appSettings.MonitoringServiceClient != null)
                     _monitoringServiceUrl = appSettings.MonitoringServiceClient.MonitoringServiceUrl;
@@ -106,8 +100,8 @@ namespace Lykke.AlgoStore.Job.GDPR
 
                 var logFactory = ApplicationContainer.Resolve<ILogFactory>();
                 _log = logFactory.CreateLog(this);
-               _healthNotifier = ApplicationContainer.Resolve<IHealthNotifier>();
-               
+                _healthNotifier = ApplicationContainer.Resolve<IHealthNotifier>();
+
                 return new AutofacServiceProvider(ApplicationContainer);
             }
             catch (Exception ex)
@@ -128,7 +122,7 @@ namespace Lykke.AlgoStore.Job.GDPR
                     app.UseDeveloperExceptionPage();
 
                 app.UseLykkeForwardedHeaders();
-                
+
                 app.UseLykkeConfiguration(opt =>
                 {
                     opt.WithMiddleware = appBuilder =>
@@ -165,7 +159,7 @@ namespace Lykke.AlgoStore.Job.GDPR
             {
                 _healthNotifier.Notify("Started", Program.EnvInfo);
 
-                ApplicationContainer.Resolve<DeactivatedSubscribersMonitor>().StartAsync();
+                await ApplicationContainer.Resolve<DeactivatedSubscribersMonitor>().StartAsync();
 
 #if !DEBUG
                 await Configuration.RegisterInMonitoringServiceAsync(_monitoringServiceUrl, _healthNotifier);
