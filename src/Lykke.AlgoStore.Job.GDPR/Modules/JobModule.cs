@@ -13,6 +13,7 @@ using Lykke.AlgoStore.Service.Security.Client;
 using Lykke.Common.Log;
 using Lykke.Logs;
 using Lykke.Logs.Loggers.LykkeConsole;
+using Lykke.Sdk.Health;
 using Lykke.SettingsReader;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -107,6 +108,10 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
         {
             builder.RegisterType<SubscriberService>()
                 .As<ISubscriberService>()
+                .SingleInstance();
+
+            builder.RegisterType<HealthService>()
+                .As<IHealthService>()
                 .SingleInstance();
         }
     }
