@@ -64,5 +64,12 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         {
             _client.DeactivateUserAccountAsync("TEST").Wait();
         }
+
+        [Test]
+        [Explicit("This test will try to initiate REST API client on localhost. Do not remove explicit attribute ever and use this just for local testing :)")]
+        public void SeedConsentAsync_Test()
+        {
+            _client.SeedConsentAsync("TEST").Wait();
+        }
     }
 }
