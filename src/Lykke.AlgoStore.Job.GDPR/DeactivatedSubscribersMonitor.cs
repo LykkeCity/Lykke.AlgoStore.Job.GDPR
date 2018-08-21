@@ -35,7 +35,7 @@ namespace Lykke.AlgoStore.Job.GDPR
 
                 foreach (var deactivatedSubscriber in deactivatedSubscribers)
                 {
-                    _log.Info($"Deactivation process of user has started for clientId: {deactivatedSubscriber.ClientId}.");
+                   _log.Info($"Deactivation process of user has started for clientId: {deactivatedSubscriber.ClientId}.");
 
                     await _subscriberService.DeactivateAccountAsync(deactivatedSubscriber.ClientId);
 

@@ -79,8 +79,11 @@ namespace Lykke.AlgoStore.Job.GDPR.Modules
 
             builder.RegisterType<AlgoRepository>().As<IAlgoReadOnlyRepository>().As<IAlgoRepository>();
 
-            builder.RegisterInstance(AzureTableStorage<PublicAlgoEntity>.Create(reloadingDbManager, PublicAlgosRepository.TableName, logFactory.CreateLog(this)));
+           builder.RegisterInstance(AzureTableStorage<PublicAlgoEntity>.Create(reloadingDbManager, PublicAlgosRepository.TableName, logFactory.CreateLog(this)));
             builder.RegisterType<PublicAlgosRepository>().As<IPublicAlgosRepository>();
+
+            builder.RegisterInstance(AzureTableStorage<AlgoRatingEntity>.Create(reloadingDbManager, AlgoRatingsRepository.TableName, logFactory.CreateLog(this)));
+            builder.RegisterType<AlgoRatingsRepository>().As<IAlgoRatingsRepository>();
         }
 
         private void RegisterDeactivationProcess(ContainerBuilder builder)

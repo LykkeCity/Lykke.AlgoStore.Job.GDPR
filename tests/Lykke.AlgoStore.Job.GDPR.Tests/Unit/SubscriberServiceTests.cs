@@ -33,6 +33,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         private Mock<IAlgoRepository> _algoRepositoryMock;
         private Mock<ILogFactory> _logFactoryMock;
         private Mock<IPublicAlgosRepository> _publicAlgosRepositoryMock;
+        private Mock<IAlgoRatingsRepository> _algoRatingsRepoMock;
 
         [SetUp]
         public void SetUp()
@@ -123,7 +124,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             _service = new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
-                _algoRepositoryMock.Object, _logFactoryMock.Object, _publicAlgosRepositoryMock.Object);
+                _algoRepositoryMock.Object, _logFactoryMock.Object, _publicAlgosRepositoryMock.Object, _algoRatingsRepoMock.Object);
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetCookieConsentAsync(ClientId));
 
@@ -159,7 +160,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             _service = new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
-                _algoRepositoryMock.Object, _logFactoryMock.Object, _publicAlgosRepositoryMock.Object);
+                _algoRepositoryMock.Object, _logFactoryMock.Object, _publicAlgosRepositoryMock.Object, _algoRatingsRepoMock.Object);
 
             var ex = Assert.ThrowsAsync<ValidationException>(() => _service.SetGdprConsentAsync(ClientId));
 
@@ -169,15 +170,17 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
         [Test]
         public void DeactivateAccountAsync_ForNullRequest_WillThrowException_Test()
         {
-            Assert.ThrowsAsync<ArgumentNullException>(() => _service.DeactivateAccountAsync(null));
+            var isSuccessfulDeactivation = _service.DeactivateAccountAsync(null).Result;
+
+            Assert.AreEqual(false, isSuccessfulDeactivation);
         }
 
         [Test]
         public void DeactivateAccountAsync_ForEmprtyRequest_WillThrowException_Test()
         {
-            var ex = Assert.ThrowsAsync<ValidationException>(() => _service.DeactivateAccountAsync(string.Empty));
+            var isSuccessfulDeactivation = _service.DeactivateAccountAsync(string.Empty).Result;
 
-            Assert.That(ex.Message, Is.EqualTo(Phrases.ClientIdEmpty));
+            Assert.AreEqual(false, isSuccessfulDeactivation);
         }
 
         [Test]
@@ -208,9 +211,11 @@ namespace Lykke.AlgoStore.Job.GDPR.Tests.Unit
 
             _publicAlgosRepositoryMock = new Mock<IPublicAlgosRepository>();
 
+            _algoRatingsRepoMock = new Mock<IAlgoRatingsRepository>();
+
             return new SubscriberService(_subscriberRepositoryMock.Object, _commentsRepositoryMock.Object,
                 _securityClientMock.Object, _instanceStoppingClientMock.Object, _clientInstanceRepositoryMock.Object,
-                _algoRepositoryMock.Object, _logFactoryMock.Object, _publicAlgosRepositoryMock.Object);
+                _algoRepositoryMock.Object, _logFactoryMock.Object, _publicAlgosRepositoryMock.Object, _algoRatingsRepoMock.Object);
         }
     }
 }

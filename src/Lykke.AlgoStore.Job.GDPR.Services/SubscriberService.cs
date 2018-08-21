@@ -25,6 +25,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         private readonly IAlgoRepository _algoRepository;
         private readonly ILog _log;
         private readonly IPublicAlgosRepository _publicAlgosRepository;
+        private readonly IAlgoRatingsRepository _algoRatingsRepository;
 
         public SubscriberService(ISubscriberRepository usersRepository,
             IAlgoCommentsRepository commentsRepository,
@@ -32,8 +33,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
             IAlgoInstanceStoppingClient algoInstanceStoppingClient,
             IAlgoClientInstanceRepository instanceRepository,
             IAlgoRepository algoRepository, ILogFactory log,
-            IPublicAlgosRepository publicAlgosRepository
-            )
+            IPublicAlgosRepository publicAlgosRepository,
+            IAlgoRatingsRepository algoRatingsRepository)
         {
             _subscribersRepository = usersRepository;
             _commentsRepository = commentsRepository;
@@ -43,6 +44,7 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
             _algoRepository = algoRepository;
             _log = log.CreateLog(this);
             _publicAlgosRepository = publicAlgosRepository;
+            _algoRatingsRepository = algoRatingsRepository;
         }
 
         public async Task SeedAsync(string clientId)
@@ -132,71 +134,19 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
         {
             bool isSuccessfulDeactivation;
 
-            ValidateClientId(clientId);
-
             try
             {
                 ValidateClientId(clientId);
 
-                //get all comments made by the user and unlink his id from author field
-                var comments = await _commentsRepository.GetAllAsync();
-                var userComments = comments.FindAll(c => c.Author == clientId);
+                await DeleteComments(clientId);
 
-                foreach (var comment in userComments)
-                {
-                    if (comment.Author == clientId)
-                    {
-                        comment.Author = null;
-                        await _commentsRepository.SaveCommentAsync(comment);
-                    }
-                }
+                await DeleteUserAssignedRoles(clientId);
 
-                //get all roles for this user
-                var user = await _securityClient.GetUserByIdWithRolesAsync(clientId);
-                var roles = user.Roles;
+                await UpdateDeactivatedUserInstances(clientId);
 
-                // delete his roles
-                foreach (var role in roles)
-                {
-                    await _securityClient.RevokeRoleFromUserAsync(
-                        new Lykke.Service.Security.Client.AutorestClient.Models.UserRoleMatchModel()
-                        {
-                            ClientId = clientId,
-                            RoleId = role.Id
-                        });
-                }
+                await UpdateDeactivatedUserAlgos(clientId);
 
-                // find and stop all instances
-                var instances = await _instanceRepository.GetAllAlgoInstancesByClientAsync(clientId);
-
-                foreach (var instance in instances)
-                {
-                    var result =
-                        await _algoInstanceStoppingClient.DeleteAlgoInstanceAsync(instance.InstanceId,
-                            instance.AuthToken);
-                    await _instanceRepository.SaveAlgoInstanceWithNewPKAsync(instance);
-                }
-
-                // replace author in algos
-                var algos = await _algoRepository.GetAllClientAlgosAsync(clientId);
-
-                foreach (var algo in algos)
-                {
-                    // update it
-                    var algoToSave = AutoMapper.Mapper.Map<IAlgo>(algo);
-                    algoToSave.ClientId = "Deactivated";
-                    algoToSave.DateModified = DateTime.Now;
-                    await _algoRepository.SaveAlgoWithNewPKAsync(algoToSave, algo.ClientId);
-
-                    if (await _publicAlgosRepository.ExistsPublicAlgoAsync(clientId, algoToSave.AlgoId))
-                    {
-                        await _publicAlgosRepository.SavePublicAlgoNewPKAsync(new PublicAlgoData()
-                        {
-                            ClientId = clientId,
-                            AlgoId = algoToSave.AlgoId
-                        });
-                    }
-                }
+                await UpdateDeactivatedUserRates(clientId);
 
                 isSuccessfulDeactivation = true;
             }
@@ -247,6 +197,86 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
             if (clientId == String.Empty)
                 throw new ValidationException(Phrases.ClientIdEmpty);
+        }
+
+        private async Task DeleteComments(string clientId)
+        {
+            var comments = await _commentsRepository.GetAllAsync();
+            var userComments = comments.FindAll(c => c.Author == clientId);
+
+            foreach (var comment in userComments)
+            {
+                if (comment.Author == clientId)
+                {
+                    comment.Author = null;
+                    await _commentsRepository.SaveCommentAsync(comment);
+                }
+            }
+        }
+
+        private async Task DeleteUserAssignedRoles(string clientId)
+        {
+            //get all roles for this user
+            var user = await _securityClient.GetUserByIdWithRolesAsync(clientId);
+            var roles = user.Roles;
+
+            // delete his roles
+            foreach (var role in roles)
+            {
+                await _securityClient.RevokeRoleFromUserAsync(
+                    new Lykke.Service.Security.Client.AutorestClient.Models.UserRoleMatchModel()
+                    {
+                        ClientId = clientId,
+                        RoleId = role.Id
+                    });
+            }
+        }
+
+        private async Task UpdateDeactivatedUserInstances(string clientId)
+        {
+            var instances = await _instanceRepository.GetAllAlgoInstancesByClientAsync(clientId);
+
+            foreach (var instance in instances)
+            {
+                var result =
+                    await _algoInstanceStoppingClient.DeleteAlgoInstanceAsync(instance.InstanceId,
+                        instance.AuthToken);
+                await _instanceRepository.SaveAlgoInstanceWithNewPKAsync(instance);
+            }
+        }
+
+        private async Task UpdateDeactivatedUserAlgos(string clientId)
+        {
+            // replace author in algos
+            var algos = await _algoRepository.GetAllClientAlgosAsync(clientId);
+
+            foreach (var algo in algos)
+            {
+                // update it
+                var algoToSave = AutoMapper.Mapper.Map<IAlgo>(algo);
+                algoToSave.ClientId = "Deactivated";
+                algoToSave.DateModified = DateTime.Now;
+                await _algoRepository.SaveAlgoWithNewPKAsync(algoToSave, algo.ClientId);
+
+                if (await _publicAlgosRepository.ExistsPublicAlgoAsync(clientId, algoToSave.AlgoId))
+                {
+                    await _publicAlgosRepository.SavePublicAlgoNewPKAsync(new PublicAlgoData()
+                    {
+                        ClientId = clientId,
+                        AlgoId = algoToSave.AlgoId
+                    });
+                }
+            }
+        }
+
+        private async Task UpdateDeactivatedUserRates(string clientId)
+        {
+            var userRates = await _algoRatingsRepository.GetAlgoRatingsByClientIdAsync(clientId);
+
+            foreach (var rate in userRates)
+            {
+                await _algoRatingsRepository.SaveAlgoRatingWithFakeIdAsync(rate);
+            }
         }
     }
 }
