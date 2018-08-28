@@ -256,6 +256,8 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
                 var algoToSave = AutoMapper.Mapper.Map<IAlgo>(algo);
                 algoToSave.ClientId = "Deactivated";
                 algoToSave.DateModified = DateTime.Now;
+                algoToSave.AlgoVisibility = algo.AlgoVisibility;
+
                 await _algoRepository.SaveAlgoWithNewPKAsync(algoToSave, algo.ClientId);
 
                 if (await _publicAlgosRepository.ExistsPublicAlgoAsync(clientId, algoToSave.AlgoId))
