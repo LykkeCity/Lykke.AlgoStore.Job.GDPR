@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Lykke.AlgoStore.CSharp.AlgoTemplate.Models.Enumerators;
 
 namespace Lykke.AlgoStore.Job.GDPR.Services
 {
@@ -238,9 +239,16 @@ namespace Lykke.AlgoStore.Job.GDPR.Services
 
             foreach (var instance in instances)
             {
-                var result =
-                    await _algoInstanceStoppingClient.DeleteAlgoInstanceAsync(instance.InstanceId,
-                        instance.AuthToken);
+                if (instance.AlgoInstanceStatus == AlgoInstanceStatus.Started)
+                {
+                    var result =
+                        await _algoInstanceStoppingClient.DeleteAlgoInstanceAsync(instance.InstanceId,
+                            instance.AuthToken);
+
+                    //Need to set status to stopped so that it gets saved with proper value in next step
+                    instance.AlgoInstanceStatus = AlgoInstanceStatus.Stopped;
+                }
+
                 await _instanceRepository.SaveAlgoInstanceWithNewPKAsync(instance);
             }
         }
