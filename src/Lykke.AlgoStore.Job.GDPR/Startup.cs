@@ -19,7 +19,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Threading.Tasks;
-using Lykke.MonitoringServiceApiCaller;
 using Lykke.Sdk;
 using GlobalErrorHandlerMiddleware = Lykke.AlgoStore.Job.GDPR.Infrastructure.GlobalErrorHandlerMiddleware;
 
